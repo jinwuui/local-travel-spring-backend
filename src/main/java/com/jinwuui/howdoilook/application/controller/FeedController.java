@@ -15,7 +15,7 @@ public class FeedController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void createFeed(@ModelAttribute FeedCreateReq feedCreateReq) {
-
+    public String createFeed(@ModelAttribute FeedCreateReq feedCreateReq) {
+        return "create feed";
     }
 }
