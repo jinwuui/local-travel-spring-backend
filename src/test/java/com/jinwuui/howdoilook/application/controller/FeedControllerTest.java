@@ -1,4 +1,4 @@
-package com.jinwuui.howdoilook.controller;
+package com.jinwuui.howdoilook.application.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,11 +19,18 @@ class FeedControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("/feeds 요청시 feed 정보 반환")
+    @DisplayName("피드 조회 요청 테스트")
     void test() throws Exception {
         mockMvc.perform(get("/api/v1/feeds"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("hi im feed"));
     }
 
+    @Test
+    @DisplayName("피드 생성 요청 테스트")
+    void createFeed() throws Exception {
+        mockMvc.perform(post("/api/v1/feeds"))
+                .andExpect(status().isCreated())
+                .andExpect(content().string("create feed"));
+    }
 }
