@@ -1,6 +1,6 @@
-package com.jinwuui.howdoilook.application.controller;
+package com.jinwuui.howdoilook.controller;
 
-import com.jinwuui.howdoilook.application.domain.FeedCreateReq;
+import com.jinwuui.howdoilook.dto.request.FeedCreateRequestDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ public class FeedController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public String createFeed(@ModelAttribute FeedCreateReq feedCreateReq) {
+    public String createFeed(@ModelAttribute FeedCreateRequestDto feedCreateRequestDto) {
         return "create feed";
     }
 }

@@ -1,4 +1,4 @@
-package com.jinwuui.howdoilook.application.domain;
+package com.jinwuui.howdoilook.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeedCreateReq {
+public class FeedCreateRequestDto {
 
     private String content;
 
