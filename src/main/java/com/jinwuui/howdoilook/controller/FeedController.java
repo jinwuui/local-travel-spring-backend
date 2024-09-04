@@ -1,7 +1,9 @@
 package com.jinwuui.howdoilook.controller;
 
+import com.jinwuui.howdoilook.config.UserPrincipal;
 import com.jinwuui.howdoilook.dto.request.FeedCreateRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +17,7 @@ public class FeedController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public String createFeed(@ModelAttribute FeedCreateRequest feedCreateRequest) {
+    public String createFeed(@AuthenticationPrincipal UserPrincipal userPrincipal, @ModelAttribute FeedCreateRequest feedCreateRequest) {
         return "create feed";
     }
 }

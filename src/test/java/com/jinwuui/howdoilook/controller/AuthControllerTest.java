@@ -3,6 +3,7 @@ package com.jinwuui.howdoilook.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jinwuui.howdoilook.dto.request.SignUpRequest;
 import com.jinwuui.howdoilook.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class AuthControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
+    @AfterEach
     void clean() {
         userRepository.deleteAll();
     }
@@ -38,8 +39,9 @@ class AuthControllerTest {
     @DisplayName("회원가입 테스트")
     void signUp() throws Exception {
         // given
+        // TODO : 테스트코드에 email 은 형식에 맞춰서 넣기
         SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("admin")
+                .email("admin")
                 .password("1234")
                 .nickname("관리자")
                 .build();

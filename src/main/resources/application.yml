@@ -1,6 +1,7 @@
 spring:
   application:
     name: how-do-i-look
+
   datasource:
     url: jdbc:h2:mem:testdb;NON_KEYWORDS=USER
     username: sa

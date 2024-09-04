@@ -19,8 +19,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "아이디는 필수 입니다.")
-    private String username;
+    @NotBlank(message = "이메일은 필수 입니다.")
+    private String email;
 
     @NotBlank(message = "비밀번호는 필수 입니다.")
     private String password;
@@ -31,8 +31,8 @@ public class User {
     private LocalDateTime createdAt;
 
     @Builder
-    public User(String username, String password, String nickname) {
-        this.username = username;
+    public User(String email, String password, String nickname) {
+        this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.createdAt = LocalDateTime.now();

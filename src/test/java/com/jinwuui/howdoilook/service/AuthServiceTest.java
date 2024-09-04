@@ -2,8 +2,9 @@ package com.jinwuui.howdoilook.service;
 
 import com.jinwuui.howdoilook.domain.User;
 import com.jinwuui.howdoilook.dto.service.SignUpDto;
-import com.jinwuui.howdoilook.exception.AlreadyExistsUsernameException;
+import com.jinwuui.howdoilook.exception.AlreadyExistsEmailException;
 import com.jinwuui.howdoilook.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class AuthServiceTest {
     @Autowired
     private AuthService authService;
 
-    @BeforeEach
+    @AfterEach
     void clean() {
         userRepository.deleteAll();
     }
@@ -31,7 +32,7 @@ class AuthServiceTest {
     void signupSuccess() {
         // given
         SignUpDto signUpDto = SignUpDto.builder()
-                .username("admin")
+                .email("admin")
                 .password("1234")
                 .nickname("관리자")
                 .build();
@@ -43,29 +44,29 @@ class AuthServiceTest {
         assertEquals(1, userRepository.count());
 
         User user = userRepository.findAll().iterator().next();
-        assertEquals("admin", user.getUsername());
+        assertEquals("admin", user.getEmail());
         assertEquals("1234", user.getPassword());
         assertEquals("관리자", user.getNickname());
     }
 
     @Test
     @DisplayName("중복된 아이디로 회원가입")
-    void signupDuplicatedUsername() {
+    void signupDuplicatedEmail() {
         // given
         User user = User.builder()
-                .username("admin")
+                .email("admin")
                 .password("1234")
                 .nickname("관리자")
                 .build();
         userRepository.save(user);
 
         SignUpDto signUpDto = SignUpDto.builder()
-                .username("admin")
+                .email("admin")
                 .password("1234")
                 .nickname("관리자")
                 .build();
 
         // expected
-        assertThrows(AlreadyExistsUsernameException.class, () -> authService.signUp(signUpDto));
+        assertThrows(AlreadyExistsEmailException.class, () -> authService.signUp(signUpDto));
     }
 }

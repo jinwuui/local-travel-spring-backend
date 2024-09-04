@@ -7,7 +7,7 @@ public class SignUpMapper {
 
     public static SignUpDto toSignUpDto(SignUpRequest signUpRequest) {
         return SignUpDto.builder()
-                .username(signUpRequest.getUsername())
+                .email(signUpRequest.getEmail())
                 .password(signUpRequest.getPassword())
                 .nickname(signUpRequest.getNickname())
                 .build();

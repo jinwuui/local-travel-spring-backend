@@ -3,11 +3,11 @@ package com.jinwuui.howdoilook.exception;
 import lombok.Getter;
 
  @Getter
-public class AlreadyExistsUsernameException extends HowDoILookException {
+public class AlreadyExistsEmailException extends HowDoILookException {
 
     private static final String MESSAGE = "이미 가입된 아이디입니다.";
 
-    public AlreadyExistsUsernameException() {
+    public AlreadyExistsEmailException() {
         super(MESSAGE);
     }
 
