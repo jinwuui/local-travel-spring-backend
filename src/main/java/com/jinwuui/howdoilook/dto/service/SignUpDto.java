@@ -1,12 +1,11 @@
 package com.jinwuui.howdoilook.dto.service;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class SignUpServiceDto {
+public class SignUpDto {
 
     private String username;
 

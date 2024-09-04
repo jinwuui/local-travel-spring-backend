@@ -1,11 +1,9 @@
 package com.jinwuui.howdoilook.service;
 
 import com.jinwuui.howdoilook.domain.User;
-import com.jinwuui.howdoilook.dto.request.SignUpRequestDto;
-import com.jinwuui.howdoilook.dto.service.SignUpServiceDto;
+import com.jinwuui.howdoilook.dto.service.SignUpDto;
 import com.jinwuui.howdoilook.exception.AlreadyExistsUsernameException;
 import com.jinwuui.howdoilook.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,14 +30,14 @@ class AuthServiceTest {
     @DisplayName("회원가입 성공")
     void signupSuccess() {
         // given
-        SignUpServiceDto signUpServiceDto = SignUpServiceDto.builder()
+        SignUpDto signUpDto = SignUpDto.builder()
                 .username("admin")
                 .password("1234")
                 .nickname("관리자")
                 .build();
 
         // when
-        authService.signUp(signUpServiceDto);
+        authService.signUp(signUpDto);
 
         // then
         assertEquals(1, userRepository.count());
@@ -61,13 +59,13 @@ class AuthServiceTest {
                 .build();
         userRepository.save(user);
 
-        SignUpServiceDto signUpServiceDto = SignUpServiceDto.builder()
+        SignUpDto signUpDto = SignUpDto.builder()
                 .username("admin")
                 .password("1234")
                 .nickname("관리자")
                 .build();
 
         // expected
-        assertThrows(AlreadyExistsUsernameException.class, () -> authService.signUp(signUpServiceDto));
+        assertThrows(AlreadyExistsUsernameException.class, () -> authService.signUp(signUpDto));
     }
 }

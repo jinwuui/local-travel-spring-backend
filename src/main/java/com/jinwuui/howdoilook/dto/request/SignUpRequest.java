@@ -1,6 +1,6 @@
 package com.jinwuui.howdoilook.dto.request;
 
-import com.jinwuui.howdoilook.dto.service.SignUpServiceDto;
+import com.jinwuui.howdoilook.dto.service.SignUpDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SignUpRequestDto {
+public class SignUpRequest {
 
     @NotBlank(message = "아이디를 입력해주세요.")
     private String username;
@@ -22,11 +22,4 @@ public class SignUpRequestDto {
     @NotBlank(message = "닉네임을 입력해주세요.")
     private String nickname;
 
-    public SignUpServiceDto toServiceDto() {
-        return SignUpServiceDto.builder()
-                .username(username)
-                .password(password)
-                .nickname(nickname)
-                .build();
-    }
 }

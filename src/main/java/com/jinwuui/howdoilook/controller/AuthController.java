@@ -1,6 +1,7 @@
 package com.jinwuui.howdoilook.controller;
 
-import com.jinwuui.howdoilook.dto.request.SignUpRequestDto;
+import com.jinwuui.howdoilook.dto.mapper.SignUpMapper;
+import com.jinwuui.howdoilook.dto.request.SignUpRequest;
 import com.jinwuui.howdoilook.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
-        authService.signUp(signUpRequestDto.toServiceDto());
+    public void signUp(@RequestBody SignUpRequest signUpRequest) {
+        authService.signUp(SignUpMapper.toSignUpDto(signUpRequest));
     }
 }
