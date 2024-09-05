@@ -2,7 +2,9 @@ package com.jinwuui.howdoilook.exception;
 
 import lombok.Getter;
 
- @Getter
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+
+@Getter
 public class AlreadyExistsEmailException extends HowDoILookException {
 
     private static final String MESSAGE = "이미 가입된 아이디입니다.";
@@ -13,6 +15,6 @@ public class AlreadyExistsEmailException extends HowDoILookException {
 
     @Override
     public int getStatusCode() {
-        return 400;
+        return SC_BAD_REQUEST;
     }
 }

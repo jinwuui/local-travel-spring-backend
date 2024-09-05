@@ -28,7 +28,6 @@ public class EmailPasswordAuthFilter extends AbstractAuthenticationProcessingFil
                 emailPassword.getEmail(), emailPassword.getPassword()
         );
 
-
         token.setDetails(this.authenticationDetailsSource.buildDetails(request));
         return this.getAuthenticationManager().authenticate(token);
     }

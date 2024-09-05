@@ -2,55 +2,40 @@ package com.jinwuui.howdoilook.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jinwuui.howdoilook.config.filter.EmailPasswordAuthFilter;
+import com.jinwuui.howdoilook.config.filter.JwtAuthFilter;
 import com.jinwuui.howdoilook.config.handler.Http401Handler;
 import com.jinwuui.howdoilook.config.handler.Http403Handler;
 import com.jinwuui.howdoilook.config.handler.LoginFailHandler;
 import com.jinwuui.howdoilook.config.handler.LoginSuccessHandler;
 import com.jinwuui.howdoilook.domain.User;
 import com.jinwuui.howdoilook.repository.UserRepository;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.jinwuui.howdoilook.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.io.IOException;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 /*
 TODO
-1. 로그인 성공 시 jwt 토큰 발급
-2. JwtUtil 구현
-3. JwtAuthFilter 구현해서 모든 요청 전에 JWT 확인
-4. accessToken refresh 기능 구현
+JwtUtil 구현
+로그인 성공 시 jwt 토큰 발급
+JwtAuthFilter 구현해서 모든 요청 전에 JWT 확인
+accessToken refresh 기능 구현
 */
 @Slf4j
 @Configuration
@@ -76,9 +61,11 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/api/v1/auth/login").permitAll()
                                 .requestMatchers("/api/v1/auth/signup").permitAll()
+                                .requestMatchers("/api/v1/auth/refresh").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(emailPasswordAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
                     e.authenticationEntryPoint(new Http401Handler(objectMapper));
@@ -91,10 +78,14 @@ public class SecurityConfig {
     public EmailPasswordAuthFilter emailPasswordAuthFilter() throws Exception {
         EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/api/v1/auth/login", objectMapper);
         filter.setAuthenticationManager(authenticationManager());
-        filter.setAuthenticationSuccessHandler(new LoginSuccessHandler()); // TODO : 로그인 성공시 JWT 토큰 발급
+        filter.setAuthenticationSuccessHandler(new LoginSuccessHandler(objectMapper, jwtUtil()));
         filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
-        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
         return filter;
+    }
+
+    @Bean
+    public JwtAuthFilter jwtAuthFilter() throws Exception {
+        return new JwtAuthFilter(jwtUtil(), userDetailsService(userRepository));
     }
 
     @Bean
@@ -116,6 +107,11 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JwtUtil jwtUtil() {
+        return new JwtUtil();
     }
 }
