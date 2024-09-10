@@ -34,7 +34,7 @@ public class CustomMockSecurityContext implements WithSecurityContextFactory<Cus
 
         UserPrincipal principal = new UserPrincipal(user);
 
-        SimpleGrantedAuthority role = new SimpleGrantedAuthority("ROLE_User");
+        SimpleGrantedAuthority role = new SimpleGrantedAuthority("ROLE_USER");
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principal,
                 user.getPassword(),
                 List.of(role));

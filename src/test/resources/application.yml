@@ -2,7 +2,7 @@ spring:
   application:
     name: how-do-i-look
   profiles:
-    active: dev
+    active: test
   cloud:
     aws:
       region:
