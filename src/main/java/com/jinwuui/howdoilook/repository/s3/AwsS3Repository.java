@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-@Profile("!local & !test")
+@Profile("prod")
 @Repository
 @RequiredArgsConstructor
 public class AwsS3Repository extends AbstractS3Repository {
