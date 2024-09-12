@@ -29,6 +29,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.0")
+//    implementation(platform("software.amazon.awssdk:bom:2.20.56"))
+//    implementation("software.amazon.awssdk:s3")
+
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
