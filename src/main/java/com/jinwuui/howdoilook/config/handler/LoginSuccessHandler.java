@@ -32,6 +32,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("[인증 성공] 200 user={}", principal.getUsername());
 
         TokenResponse tokenResponse = TokenResponse.builder()
+                .userId(principal.getUserId())
                 .accessToken(jwtUtil.generateAccessToken(principal.getUsername()))
                 .refreshToken(jwtUtil.generateRefreshToken(principal.getUsername()))
                 .build();
