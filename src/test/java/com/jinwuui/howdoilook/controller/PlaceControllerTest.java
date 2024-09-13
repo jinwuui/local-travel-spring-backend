@@ -61,9 +61,93 @@ class PlaceControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
                         .file(file1)
                         .file(file2)
-                        .param("content", "Sample content")
+                        .param("name", "Sample name")
+                        .param("description", "Sample description")
+                        .param("lat", "33.1111")
+                        .param("lng", "128.1111")
+                        .param("rating", "1")
+                        .param("categories", "['모험', '음식']")
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    @CustomMockUser
+    @DisplayName("장소 생성 - 이미지 null")
+    void postPlaceNullImages() throws Exception {
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
+                        .param("name", "Sample name")
+                        .param("description", "Sample description")
+                        .param("lat", "33.1111")
+                        .param("lng", "128.1111")
+                        .param("rating", "1")
+                        .param("categories", "['모험', '음식']")
+                        .characterEncoding("UTF-8"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @CustomMockUser
+    @DisplayName("장소 생성 실패 - 등록 정보 누락")
+    void postPlaceFailMissingInput() throws Exception {
+        // given
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png", "image2 content".getBytes(StandardCharsets.UTF_8));
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
+                        .file(file1)
+                        .file(file2)
+                        .param("description", "Sample description")
+                        .param("lat", "33.1111")
+                        .param("lng", "128.1111")
+                        .param("rating", "1")
+                        .param("categories", "['모험', '음식']")
+                        .characterEncoding("UTF-8"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @CustomMockUser
+    @DisplayName("장소 생성 실패 - 카테고리 null")
+    void postPlaceFailNullCategories() throws Exception {
+        // given
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png", "image2 content".getBytes(StandardCharsets.UTF_8));
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
+                        .file(file1)
+                        .file(file2)
+                        .param("name", "Sample name")
+                        .param("description", "Sample description")
+                        .param("lat", "33.1111")
+                        .param("lng", "128.1111")
+                        .param("rating", "1")
+                        .characterEncoding("UTF-8"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @CustomMockUser
+    @DisplayName("장소 생성 실패 - 등록 정보 누락")
+    void postPlaceFail() throws Exception {
+        // given
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png", "image2 content".getBytes(StandardCharsets.UTF_8));
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
+                        .file(file1)
+                        .file(file2)
+                        .param("description", "Sample description")
+                        .param("lat", "33.1111")
+                        .param("lng", "128.1111")
+                        .param("rating", "1")
+                        .param("categories", "['모험', '음식']")
+                        .characterEncoding("UTF-8"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

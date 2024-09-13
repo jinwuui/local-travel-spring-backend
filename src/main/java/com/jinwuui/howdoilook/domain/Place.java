@@ -10,8 +10,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -39,7 +39,7 @@ public class Place {
     private Long rating;
 
     @OneToMany(mappedBy = "place")
-    private Set<PlaceCategory> placeCategories;
+    private List<PlaceCategory> placeCategories;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
@@ -63,5 +63,18 @@ public class Place {
         this.lng = lng;
         this.rating = rating;
         this.user = user;
+    }
+
+    public void addCategory(Category category) {
+        if (this.placeCategories == null) {
+            this.placeCategories = new ArrayList<>();
+        }
+
+        PlaceCategory placeCategory = PlaceCategory.builder()
+                .place(this)
+                .category(category)
+                .build();
+
+        this.placeCategories.add(placeCategory);
     }
 }

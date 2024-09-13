@@ -1,6 +1,7 @@
 package com.jinwuui.howdoilook.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,9 @@ public class PlaceCategory {
     @JoinColumn()
     private Category category;
 
+    @Builder
+    public PlaceCategory(Place place, Category category) {
+        this.place = place;
+        this.category = category;
+    }
 }

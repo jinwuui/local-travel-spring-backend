@@ -1,5 +1,6 @@
 package com.jinwuui.howdoilook.service;
 
+import com.jinwuui.howdoilook.domain.Category;
 import com.jinwuui.howdoilook.domain.Place;
 import com.jinwuui.howdoilook.domain.User;
 import com.jinwuui.howdoilook.dto.service.PlaceDto;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
+
+    private final CategoryService categoryService;
 
     private final PlaceRepository placeRepository;
 
@@ -32,8 +35,10 @@ public class PlaceService {
                 .user(user)
                 .build();
 
-        // TODO: categories 저장 OR find
-        // TODO: place.addCategory();
+        for (String categoryName : placeDto.getCategories()) {
+            Category category = categoryService.findOrCreate(categoryName);
+            place.addCategory(category);
+        }
 
         return placeRepository.save(place);
     }

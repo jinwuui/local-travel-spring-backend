@@ -4,10 +4,7 @@ import com.jinwuui.howdoilook.domain.Place;
 import com.jinwuui.howdoilook.domain.User;
 import com.jinwuui.howdoilook.dto.service.PlaceDto;
 import com.jinwuui.howdoilook.exception.UserNotFoundException;
-import com.jinwuui.howdoilook.repository.PlaceRepository;
-import com.jinwuui.howdoilook.repository.ImageRepository;
-import com.jinwuui.howdoilook.repository.S3Repository;
-import com.jinwuui.howdoilook.repository.UserRepository;
+import com.jinwuui.howdoilook.repository.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +30,9 @@ class PlaceCreationServiceTest {
     private ImageRepository imageRepository;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private S3Repository s3Repository;
 
     @Autowired
@@ -40,6 +40,7 @@ class PlaceCreationServiceTest {
 
     @AfterEach
     void clean() {
+        categoryRepository.deleteAll();
         placeRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -58,7 +59,12 @@ class PlaceCreationServiceTest {
         MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
-                .content("임시 내용")
+                .lat(31.1111)
+                .lng(128.1111)
+                .name("좋은 여행지")
+                .description("정말 좋아요")
+                .rating(3L)
+                .categories(List.of("모험", "축제", "음식"))
                 .images(List.of(file1, file2))
                 .build();
 
@@ -66,11 +72,92 @@ class PlaceCreationServiceTest {
         Long placeId = placeCreationService.createPlaceWithImages(user.getId(), placeDto);
 
         // then
+        assertEquals(3L, categoryRepository.count());
         assertEquals(1L, placeRepository.count());
         assertEquals(2L, imageRepository.count());
         Place place = placeRepository.findAll().get(0);
         assertEquals(placeId, place.getId());
-        assertEquals(placeDto.getContent(), place.getContent());
+        assertEquals(placeDto.getName(), place.getName());
+        assertEquals(placeDto.getDescription(), place.getDescription());
+        assertEquals(placeDto.getLat(), place.getLat());
+        assertEquals(placeDto.getLng(), place.getLng());
+        assertEquals(placeDto.getRating(), place.getRating());
+    }
+
+    @Test
+    @DisplayName("장소와 이미지 생성 - 카테고리 없음")
+    void createPlaceNoCategories() {
+        // given
+        User user = User.builder()
+                .email("jinwuui@gmail.com")
+                .nickname("jinwuui")
+                .password("1234")
+                .build();
+        userRepository.save(user);
+
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
+        PlaceDto placeDto = PlaceDto.builder()
+                .lat(31.1111)
+                .lng(128.1111)
+                .name("좋은 여행지")
+                .description("정말 좋아요")
+                .rating(3L)
+                .categories(List.of())
+                .images(List.of(file1, file2))
+                .build();
+
+        // when
+        Long placeId = placeCreationService.createPlaceWithImages(user.getId(), placeDto);
+
+        // then
+        assertEquals(0L, categoryRepository.count());
+        assertEquals(1L, placeRepository.count());
+        assertEquals(2L, imageRepository.count());
+        Place place = placeRepository.findAll().get(0);
+        assertEquals(placeId, place.getId());
+        assertEquals(placeDto.getName(), place.getName());
+        assertEquals(placeDto.getDescription(), place.getDescription());
+        assertEquals(placeDto.getLat(), place.getLat());
+        assertEquals(placeDto.getLng(), place.getLng());
+        assertEquals(placeDto.getRating(), place.getRating());
+    }
+
+    @Test
+    @DisplayName("장소와 이미지 생성 - 이미지 없음")
+    void createPlaceNoImages() {
+        // given
+        User user = User.builder()
+                .email("jinwuui@gmail.com")
+                .nickname("jinwuui")
+                .password("1234")
+                .build();
+        userRepository.save(user);
+
+        PlaceDto placeDto = PlaceDto.builder()
+                .lat(31.1111)
+                .lng(128.1111)
+                .name("좋은 여행지")
+                .description("정말 좋아요")
+                .rating(3L)
+                .categories(List.of("모험", "축제", "음식"))
+                .images(List.of())
+                .build();
+
+        // when
+        Long placeId = placeCreationService.createPlaceWithImages(user.getId(), placeDto);
+
+        // then
+        assertEquals(3L, categoryRepository.count());
+        assertEquals(1L, placeRepository.count());
+        assertEquals(0L, imageRepository.count());
+        Place place = placeRepository.findAll().get(0);
+        assertEquals(placeId, place.getId());
+        assertEquals(placeDto.getName(), place.getName());
+        assertEquals(placeDto.getDescription(), place.getDescription());
+        assertEquals(placeDto.getLat(), place.getLat());
+        assertEquals(placeDto.getLng(), place.getLng());
+        assertEquals(placeDto.getRating(), place.getRating());
     }
 
     @Test
@@ -87,7 +174,12 @@ class PlaceCreationServiceTest {
         MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
-                .content("임시 내용")
+                .lat(31.1111)
+                .lng(128.1111)
+                .name("좋은 여행지")
+                .description("정말 좋아요")
+                .rating(3L)
+                .categories(List.of("모험", "축제", "음식"))
                 .images(List.of(file1, file2))
                 .build();
 
@@ -110,7 +202,12 @@ class PlaceCreationServiceTest {
         MockMultipartFile file1 = new MockMultipartFile("notImages", "notImages.txt", "text/plain", "notImages content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
-                .content("임시 내용")
+                .lat(31.1111)
+                .lng(128.1111)
+                .name("좋은 여행지")
+                .description("정말 좋아요")
+                .rating(3L)
+                .categories(List.of("모험", "축제", "음식"))
                 .images(List.of(file1, file2))
                 .build();
 

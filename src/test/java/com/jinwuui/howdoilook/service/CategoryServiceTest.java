@@ -26,6 +26,38 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리 생성 또는 찾기 - 생성인 경우")
+    void findOrCreateCategoryWhenNewCategory() {
+        // given
+        String name = "카테고리1";
+
+        // when
+        Category category = categoryService.findOrCreate(name);
+
+        // then
+        assertEquals(1L, categoryRepository.count());
+        assertEquals(name, category.getName());
+    }
+
+    @Test
+    @DisplayName("카테고리 생성 또는 찾기 - 찾기인 경우")
+    void findOrCreateCategoryWhenExistingCategory() {
+        // given
+        Category category = Category.builder()
+                .name("카테고리1")
+                .build();
+        categoryRepository.save(category);
+
+        // when
+        Category findCategory = categoryService.findOrCreate(category.getName());
+
+        // then
+        assertEquals(1L, categoryRepository.count());
+        assertEquals(category.getId(), findCategory.getId());
+        assertEquals(category.getName(), findCategory.getName());
+    }
+
+    @Test
     @DisplayName("카테고리 생성")
     void createCategory() {
         // given
