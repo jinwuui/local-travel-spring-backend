@@ -2,6 +2,7 @@ package com.jinwuui.howdoilook.service;
 
 import com.jinwuui.howdoilook.domain.Place;
 import com.jinwuui.howdoilook.domain.User;
+import com.jinwuui.howdoilook.dto.service.PlaceDto;
 import com.jinwuui.howdoilook.exception.UserNotFoundException;
 import com.jinwuui.howdoilook.repository.PlaceRepository;
 import com.jinwuui.howdoilook.repository.UserRepository;
@@ -18,14 +19,22 @@ public class PlaceService {
 
     private final UserRepository userRepository;
 
-    public Place create(Long userId, String content) {
+    public Place create(Long userId, PlaceDto placeDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         Place place = Place.builder()
-                .content(content)
+                .name(placeDto.getName())
+                .description(placeDto.getDescription())
+                .lat(placeDto.getLat())
+                .lng(placeDto.getLng())
+                .rating(placeDto.getRating())
                 .user(user)
                 .build();
+
+        // TODO: categories 저장 OR find
+        // TODO: place.addCategory();
+
         return placeRepository.save(place);
     }
 }

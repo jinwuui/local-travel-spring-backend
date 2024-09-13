@@ -5,10 +5,15 @@ import com.jinwuui.howdoilook.dto.service.PlaceDto;
 
 public class PlaceMapper {
 
-    public static PlaceDto toPlaceDto(PlaceCreateRequest placeCreateRequest) {
+    public static PlaceDto toPlaceDto(PlaceCreateRequest request) {
         return PlaceDto.builder()
-                .content(placeCreateRequest.getContent())
-                .images(placeCreateRequest.getImages())
+                .name(request.getName())
+                .description(request.getDescription())
+                .lat(request.getLat())
+                .lng(request.getLng())
+                .rating(request.getRating())
+                .categories(request.getCategories())
+                .images(request.getImages())
                 .build();
     }
 }

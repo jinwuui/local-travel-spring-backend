@@ -12,7 +12,17 @@ import java.util.List;
 @Builder
 public class PlaceDto {
 
-    private String content;
+    private String name;
+
+    private String description;
+
+    private Double lat;
+
+    private Double lng;
+
+    private Long rating;
+
+    private List<String> categories;
 
     private List<MultipartFile> images;
 
