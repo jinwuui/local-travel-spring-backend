@@ -1,6 +1,7 @@
 package com.jinwuui.howdoilook.controller;
 
 import com.jinwuui.howdoilook.config.CustomMockUser;
+import com.jinwuui.howdoilook.repository.CategoryRepository;
 import com.jinwuui.howdoilook.repository.PlaceRepository;
 import com.jinwuui.howdoilook.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,9 @@ class PlaceControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private PlaceRepository placeRepository;
 
     @Autowired
@@ -36,6 +40,7 @@ class PlaceControllerTest {
 
     @AfterEach
     void clean() {
+        categoryRepository.deleteAll();
         placeRepository.deleteAll();
         userRepository.deleteAll();
     }
