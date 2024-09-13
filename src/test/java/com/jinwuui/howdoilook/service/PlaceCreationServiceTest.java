@@ -1,13 +1,10 @@
 package com.jinwuui.howdoilook.service;
 
-import com.jinwuui.howdoilook.config.CustomMockUser;
-import com.jinwuui.howdoilook.domain.Feed;
-import com.jinwuui.howdoilook.domain.Image;
+import com.jinwuui.howdoilook.domain.Place;
 import com.jinwuui.howdoilook.domain.User;
-import com.jinwuui.howdoilook.dto.service.FeedDto;
-import com.jinwuui.howdoilook.exception.FeedNotFoundException;
+import com.jinwuui.howdoilook.dto.service.PlaceDto;
 import com.jinwuui.howdoilook.exception.UserNotFoundException;
-import com.jinwuui.howdoilook.repository.FeedRepository;
+import com.jinwuui.howdoilook.repository.PlaceRepository;
 import com.jinwuui.howdoilook.repository.ImageRepository;
 import com.jinwuui.howdoilook.repository.S3Repository;
 import com.jinwuui.howdoilook.repository.UserRepository;
@@ -18,20 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class FeedCreationServiceTest {
+class PlaceCreationServiceTest {
 
     @Autowired
-    private FeedCreationService feedCreationService;
+    private PlaceCreationService placeCreationService;
 
     @Autowired
-    private FeedRepository feedRepository;
+    private PlaceRepository placeRepository;
 
     @Autowired
     private ImageRepository imageRepository;
@@ -44,13 +40,13 @@ class FeedCreationServiceTest {
 
     @AfterEach
     void clean() {
-        feedRepository.deleteAll();
+        placeRepository.deleteAll();
         userRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("피드와 이미지 생성")
-    void createFeed() {
+    @DisplayName("장소와 이미지 생성")
+    void createPlace() {
         // given
         User user = User.builder()
                 .email("jinwuui@gmail.com")
@@ -61,25 +57,25 @@ class FeedCreationServiceTest {
 
         MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
-        FeedDto feedDto = FeedDto.builder()
+        PlaceDto placeDto = PlaceDto.builder()
                 .content("임시 내용")
                 .images(List.of(file1, file2))
                 .build();
 
         // when
-        Long feedId = feedCreationService.createFeedWithImages(user.getId(), feedDto);
+        Long placeId = placeCreationService.createPlaceWithImages(user.getId(), placeDto);
 
         // then
-        assertEquals(1L, feedRepository.count());
+        assertEquals(1L, placeRepository.count());
         assertEquals(2L, imageRepository.count());
-        Feed feed = feedRepository.findAll().get(0);
-        assertEquals(feedId, feed.getId());
-        assertEquals(feedDto.getContent(), feed.getContent());
+        Place place = placeRepository.findAll().get(0);
+        assertEquals(placeId, place.getId());
+        assertEquals(placeDto.getContent(), place.getContent());
     }
 
     @Test
-    @DisplayName("피드와 이미지 생성 실패 - 유저 찾기 실패")
-    void createFeedFailUserNotFound() {
+    @DisplayName("장소와 이미지 생성 실패 - 유저 찾기 실패")
+    void createPlaceFailUserNotFound() {
         // given
         User user = User.builder()
                 .email("jinwuui@gmail.com")
@@ -90,19 +86,19 @@ class FeedCreationServiceTest {
 
         MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
-        FeedDto feedDto = FeedDto.builder()
+        PlaceDto placeDto = PlaceDto.builder()
                 .content("임시 내용")
                 .images(List.of(file1, file2))
                 .build();
 
         // expected
         assertThrows(UserNotFoundException.class,
-                () -> feedCreationService.createFeedWithImages(user.getId() + 1L, feedDto));
+                () -> placeCreationService.createPlaceWithImages(user.getId() + 1L, placeDto));
     }
 
     @Test
-    @DisplayName("피드와 이미지 생성 실패 - 이미지가 아닌 파일")
-    void createFeedFailNotImageFile() {
+    @DisplayName("장소와 이미지 생성 실패 - 이미지가 아닌 파일")
+    void createPlaceFailNotImageFile() {
         // given
         User user = User.builder()
                 .email("jinwuui@gmail.com")
@@ -113,13 +109,13 @@ class FeedCreationServiceTest {
 
         MockMultipartFile file1 = new MockMultipartFile("notImages", "notImages.txt", "text/plain", "notImages content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
-        FeedDto feedDto = FeedDto.builder()
+        PlaceDto placeDto = PlaceDto.builder()
                 .content("임시 내용")
                 .images(List.of(file1, file2))
                 .build();
 
         // when
-        feedCreationService.createFeedWithImages(user.getId(), feedDto);
+        placeCreationService.createPlaceWithImages(user.getId(), placeDto);
 
         // then
         assertEquals(1L, imageRepository.count());

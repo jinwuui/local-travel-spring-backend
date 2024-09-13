@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class FeedCreateRequest {
+public class PlaceCreateRequest {
 
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;

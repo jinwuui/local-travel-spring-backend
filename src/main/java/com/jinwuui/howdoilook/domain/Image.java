@@ -25,7 +25,7 @@ public class Image {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
-    private Feed feed;
+    private Place place;
 
     @CreatedDate
     @Column(updatable = false)
@@ -35,8 +35,8 @@ public class Image {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Image(String url, Feed feed) {
+    public Image(String url, Place place) {
         this.url = url;
-        this.feed = feed;
+        this.place = place;
     }
 }

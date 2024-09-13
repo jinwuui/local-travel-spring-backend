@@ -1,6 +1,6 @@
 package com.jinwuui.howdoilook.service;
 
-import com.jinwuui.howdoilook.domain.Feed;
+import com.jinwuui.howdoilook.domain.Place;
 import com.jinwuui.howdoilook.domain.Image;
 import com.jinwuui.howdoilook.exception.InvalidFileFormatException;
 import com.jinwuui.howdoilook.repository.ImageRepository;
@@ -27,14 +27,14 @@ public class ImageService {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
-    public void saveImages(Feed feed, List<MultipartFile> images) {
+    public void saveImages(Place place, List<MultipartFile> images) {
         List<String> urls = saveImagesToS3(images).join();
 
         urls.forEach(url -> {
             if (!url.startsWith("failed: ")) {
                 Image image = Image.builder()
                         .url(url)
-                        .feed(feed)
+                        .place(place)
                         .build();
 
                 imageRepository.save(image);

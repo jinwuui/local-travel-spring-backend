@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class FeedDto {
+public class PlaceDto {
 
     private String content;
 

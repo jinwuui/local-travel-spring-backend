@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Feed {
+public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Feed {
     @Lob
     private String content;
 
-    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
     @ManyToOne
@@ -41,7 +41,7 @@ public class Feed {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Feed(String content, User user) {
+    public Place(String content, User user) {
         this.content = content;
         this.user = user;
     }
