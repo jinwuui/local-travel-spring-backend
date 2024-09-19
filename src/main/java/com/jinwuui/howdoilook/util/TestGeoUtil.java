@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,12 +16,11 @@ public class TestGeoUtil extends GeoUtil {
     private Map<String, String> mockResponses = new HashMap<>();
 
     public TestGeoUtil() {
-        super(null, null);
+        super(null, null, null);
     }
 
     @Override
-    public String getCountryName(double lat, double lng) throws IOException {
-        log.info(">>>> getCountryName called with lat: {}, lng: {}", lat, lng);
+    public String getCountryName(double lat, double lng) {
         String key = lat + "," + lng;
         return mockResponses.getOrDefault(key, "Unknown");
     }
