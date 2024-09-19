@@ -59,8 +59,8 @@ class PlaceCreationServiceTest {
         MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
-                .lat(31.1111)
-                .lng(128.1111)
+                .lat(37.5665)
+                .lng(126.978)
                 .name("좋은 여행지")
                 .description("정말 좋아요")
                 .rating(3L)
@@ -82,6 +82,7 @@ class PlaceCreationServiceTest {
         assertEquals(placeDto.getLat(), place.getLat());
         assertEquals(placeDto.getLng(), place.getLng());
         assertEquals(placeDto.getRating(), place.getRating());
+        assertNotNull(place.getCountry());
     }
 
     @Test
@@ -98,8 +99,8 @@ class PlaceCreationServiceTest {
         MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
-                .lat(31.1111)
-                .lng(128.1111)
+                .lat(37.5665)
+                .lng(126.978)
                 .name("좋은 여행지")
                 .description("정말 좋아요")
                 .rating(3L)
@@ -121,6 +122,7 @@ class PlaceCreationServiceTest {
         assertEquals(placeDto.getLat(), place.getLat());
         assertEquals(placeDto.getLng(), place.getLng());
         assertEquals(placeDto.getRating(), place.getRating());
+        assertNotNull(place.getCountry());
     }
 
     @Test
@@ -135,8 +137,8 @@ class PlaceCreationServiceTest {
         userRepository.save(user);
 
         PlaceDto placeDto = PlaceDto.builder()
-                .lat(31.1111)
-                .lng(128.1111)
+                .lat(37.5665)
+                .lng(126.978)
                 .name("좋은 여행지")
                 .description("정말 좋아요")
                 .rating(3L)
@@ -158,6 +160,7 @@ class PlaceCreationServiceTest {
         assertEquals(placeDto.getLat(), place.getLat());
         assertEquals(placeDto.getLng(), place.getLng());
         assertEquals(placeDto.getRating(), place.getRating());
+        assertNotNull(place.getCountry());
     }
 
     @Test
@@ -174,8 +177,8 @@ class PlaceCreationServiceTest {
         MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
-                .lat(31.1111)
-                .lng(128.1111)
+                .lat(37.5665)
+                .lng(126.978)
                 .name("좋은 여행지")
                 .description("정말 좋아요")
                 .rating(3L)
@@ -202,8 +205,8 @@ class PlaceCreationServiceTest {
         MockMultipartFile file1 = new MockMultipartFile("notImages", "notImages.txt", "text/plain", "notImages content".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
-                .lat(31.1111)
-                .lng(128.1111)
+                .lat(37.5665)
+                .lng(126.978)
                 .name("좋은 여행지")
                 .description("정말 좋아요")
                 .rating(3L)

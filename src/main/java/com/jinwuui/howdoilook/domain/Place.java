@@ -38,6 +38,17 @@ public class Place {
 
     private Long rating;
 
+    private String country;
+
+    private String hanguls;
+
+    private String chosungs;
+
+    private String alphabets;
+
+    @Lob
+    private byte[] embedding;
+
     @OneToMany(mappedBy = "place")
     private List<PlaceCategory> placeCategories;
 
@@ -56,12 +67,13 @@ public class Place {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Place(String name, String description, Double lat, Double lng, Long rating, User user) {
+    public Place(String name, String description, Double lat, Double lng, Long rating, String country, User user) {
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lng = lng;
         this.rating = rating;
+        this.country = country;
         this.user = user;
     }
 

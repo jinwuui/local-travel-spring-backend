@@ -3,6 +3,7 @@ spring:
     name: how-do-i-look
   profiles:
     active: dev
+    include: secret
   cloud:
     aws:
       region:
