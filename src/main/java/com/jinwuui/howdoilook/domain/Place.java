@@ -40,14 +40,8 @@ public class Place {
 
     private String country;
 
-    private String hanguls;
-
-    private String chosungs;
-
-    private String alphabets;
-
     @Lob
-    private byte[] embedding;
+    private List<Double> embedding;
 
     @OneToMany(mappedBy = "place")
     private List<PlaceCategory> placeCategories;
@@ -77,6 +71,10 @@ public class Place {
         this.user = user;
     }
 
+    public void setEmbedding(List<Double> embedding) {
+        this.embedding = embedding;
+    }
+
     public void addCategory(Category category) {
         if (this.placeCategories == null) {
             this.placeCategories = new ArrayList<>();
@@ -88,5 +86,34 @@ public class Place {
                 .build();
 
         this.placeCategories.add(placeCategory);
+    }
+
+    public String getEmbeddingText() {
+        final String DELIMITER = " | ";
+        StringBuilder embeddingText = new StringBuilder();
+        
+        embeddingText.append("이름:").append(this.name).append(DELIMITER);
+        embeddingText.append("설명:").append(this.description).append(DELIMITER);
+        embeddingText.append("latitude:").append(String.format("%.6f", this.lat)).append(DELIMITER);
+        embeddingText.append("longitude:").append(String.format("%.6f", this.lng)).append(DELIMITER);
+        
+        if (this.country != null && !this.country.isEmpty()) {
+            embeddingText.append("국가:").append(this.country).append(DELIMITER);
+        }
+        
+        if (this.placeCategories != null && !this.placeCategories.isEmpty()) {
+            embeddingText.append("카테고리:");
+            for (PlaceCategory placeCategory : this.placeCategories) {
+                embeddingText.append(placeCategory.getCategory().getName()).append(",");
+            }
+            embeddingText.setLength(embeddingText.length() - 1);
+            embeddingText.append(DELIMITER);
+        }
+        
+        if (this.rating != null) {
+            embeddingText.append("평점:").append(this.rating);
+        }
+        
+        return embeddingText.toString().trim();
     }
 }

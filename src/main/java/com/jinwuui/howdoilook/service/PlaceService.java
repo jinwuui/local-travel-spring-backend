@@ -8,10 +8,14 @@ import com.jinwuui.howdoilook.exception.PlaceNotFoundException;
 import com.jinwuui.howdoilook.exception.UserNotFoundException;
 import com.jinwuui.howdoilook.repository.PlaceRepository;
 import com.jinwuui.howdoilook.repository.UserRepository;
+import com.jinwuui.howdoilook.util.EmbeddingUtil;
 import com.jinwuui.howdoilook.util.GeoUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -26,6 +30,8 @@ public class PlaceService {
     private final UserRepository userRepository;
 
     private final GeoUtil geoUtil;
+
+    private final EmbeddingUtil embeddingUtil;
 
     public Place create(Long userId, PlaceDto placeDto) {
         User user = userRepository.findById(userId)
@@ -55,9 +61,8 @@ public class PlaceService {
             place.addCategory(category);
         }
 
-        // TODO: chosungs, hanguls, alphabets 생성 - 비동기 가능
-        
-        // TODO: embedding 값 생성 - 비동기 가능
+        List<Double> embedding = embeddingUtil.fetchEmbedding(place.getEmbeddingText());
+        place.setEmbedding(embedding);
 
         return placeRepository.save(place);
     }
