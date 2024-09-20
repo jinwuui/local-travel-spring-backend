@@ -9,14 +9,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @Component
-@Profile("prod")
+@Profile({"dev","prod"})
 public class GeoUtil extends ApiRequestUtil {
 
     @Value("${google.geocode.api.url}")
@@ -47,7 +49,16 @@ public class GeoUtil extends ApiRequestUtil {
         queryParams.put("language", language);
         queryParams.put("region", region);
 
-        JsonNode response = getRequest(geocodeApiUrl, googleApiKey, AuthType.QUERY_PARAM, "key");
+        String url = UriComponentsBuilder.fromHttpUrl(geocodeApiUrl)
+                .queryParams(new LinkedMultiValueMap<>(queryParams.entrySet().stream()
+                        .collect(java.util.stream.Collectors.toMap(
+                                Map.Entry::getKey,
+                                e -> java.util.Collections.singletonList(e.getValue())
+                        ))))
+                .build()
+                .toUriString();
+
+        JsonNode response = getRequest(url, googleApiKey, AuthType.QUERY_PARAM, "key");
         return extractCountryName(response);
     }
 
@@ -70,7 +81,7 @@ public class GeoUtil extends ApiRequestUtil {
     private static boolean isDokdo(double lat, double lng) {
         return DokdoBounds.isWithinBounds(lat, lng);
     }
-    
+
     private static class DokdoBounds {
         private static final double LAT_MIN = 37.237146;
         private static final double LAT_MAX = 37.255864;

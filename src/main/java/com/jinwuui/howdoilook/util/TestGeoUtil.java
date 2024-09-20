@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@Profile({"dev", "test"})
+@Profile("test")
 public class TestGeoUtil extends GeoUtil {
 
     private Map<String, String> mockResponses = new HashMap<>();
