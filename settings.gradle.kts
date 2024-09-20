@@ -1,1 +1,1 @@
-rootProject.name = "how-do-i-look"
+rootProject.name = "local-travel"

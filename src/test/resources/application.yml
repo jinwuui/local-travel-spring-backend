@@ -1,6 +1,6 @@
 spring:
   application:
-    name: how-do-i-look
+    name: local-travel
   profiles:
     active: test
     include: secret
