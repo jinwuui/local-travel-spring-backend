@@ -3,6 +3,7 @@ package com.jinwuui.localtravel.controller;
 import com.jinwuui.localtravel.config.CustomMockUser;
 import com.jinwuui.localtravel.domain.Bookmark;
 import com.jinwuui.localtravel.domain.Category;
+import com.jinwuui.localtravel.domain.Image;
 import com.jinwuui.localtravel.domain.Place;
 import com.jinwuui.localtravel.domain.User;
 import com.jinwuui.localtravel.repository.BookmarkRepository;
@@ -29,7 +30,9 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @Slf4j
 @SpringBootTest
@@ -481,5 +484,89 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.items", hasSize(1)))
                     .andExpect(jsonPath("$.items[0].placeId").value(place3.getId()));
         }
+
+        @Test
+        @CustomMockUser
+        @DisplayName("장소 id로 상세 정보 조회")
+        void getPlaceById() throws Exception {
+            // given
+            Category category = Category.builder().name("관광").build();
+            categoryRepository.save(category);
+
+            Place place = Place.builder()
+                    .name("테스트 장소")
+                    .description("테스트 설명")
+                    .lat(37.5665)
+                    .lng(126.9780)
+                    .rating(5L)
+                    .build();
+            place.addCategory(category);
+            Place savedPlace = placeRepository.save(place);
+
+            // expected
+            mockMvc.perform(get("/api/v1/places/{placeId}", savedPlace.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.placeId").value(savedPlace.getId()))
+                    .andExpect(jsonPath("$.name").value(savedPlace.getName()))
+                    .andExpect(jsonPath("$.description").value(savedPlace.getDescription()))
+                    .andExpect(jsonPath("$.lat").value(savedPlace.getLat()))
+                    .andExpect(jsonPath("$.lng").value(savedPlace.getLng()))
+                    .andExpect(jsonPath("$.rating").value(savedPlace.getRating()))
+                    .andExpect(jsonPath("$.isFavorite").value(false))
+                    .andExpect(jsonPath("$.categories").isArray())
+                    .andExpect(jsonPath("$.categories", hasSize(1)))
+                    .andExpect(jsonPath("$.categories[0]").value("관광"))
+                    .andExpect(jsonPath("$.imageUrls").isArray())
+                    .andExpect(jsonPath("$.imageUrls", hasSize(0)));
+        }
+
+    @Test
+    @CustomMockUser
+    @DisplayName("카테고리와 이미지가 모두 있는 장소 상세 정보 조회")
+    void getPlaceWithCategoriesAndImages() throws Exception {
+        // given
+        Category category1 = Category.builder().name("관광").build();
+        Category category2 = Category.builder().name("맛집").build();
+        categoryRepository.saveAll(List.of(category1, category2));
+
+        Place place = Place.builder()
+                .name("테스트 장소")
+                .description("테스트 설명")
+                .lat(37.5665)
+                .lng(126.9780)
+                .rating(4L)
+                .build();
+        place.addCategory(category1);
+        place.addCategory(category2);
+        
+        Image image1 = Image.builder().url("http://example.com/image1.jpg").build();
+        Image image2 = Image.builder().url("http://example.com/image2.jpg").build();
+        place.addImage(image1);
+        place.addImage(image2);
+        
+        Place savedPlace = placeRepository.save(place);
+
+        // expected
+        mockMvc.perform(get("/api/v1/places/{placeId}", savedPlace.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.placeId").value(savedPlace.getId()))
+                .andExpect(jsonPath("$.name").value(savedPlace.getName()))
+                .andExpect(jsonPath("$.description").value(savedPlace.getDescription()))
+                .andExpect(jsonPath("$.lat").value(savedPlace.getLat()))
+                .andExpect(jsonPath("$.lng").value(savedPlace.getLng()))
+                .andExpect(jsonPath("$.rating").value(savedPlace.getRating()))
+                .andExpect(jsonPath("$.isFavorite").value(false))
+                .andExpect(jsonPath("$.categories").isArray())
+                .andExpect(jsonPath("$.categories", hasSize(2)))
+                .andExpect(jsonPath("$.categories", containsInAnyOrder("관광", "맛집")))
+                .andExpect(jsonPath("$.imageUrls").isArray())
+                .andExpect(jsonPath("$.imageUrls", hasSize(2)))
+                .andExpect(jsonPath("$.imageUrls", containsInAnyOrder(
+                        "http://example.com/image1.jpg",
+                        "http://example.com/image2.jpg"
+                )));
+    }
     }
 }

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -86,6 +87,17 @@ public class Place {
                 .build();
 
         this.placeCategories.add(placeCategory);
+    }
+
+    public void addImage(Image image) {
+        if (this.images == null) {
+            this.images = new ArrayList<>();
+        }
+
+        this.images.add(image);
+        if (image.getPlace() != this) {
+            image.setPlace(this);
+        }
     }
 
     public String getEmbeddingText() {

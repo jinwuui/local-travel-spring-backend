@@ -40,4 +40,12 @@ public class Image {
         this.url = url;
         this.place = place;
     }
+
+    public void setPlace(Place place) {
+        this.place = place;
+        
+        if (!this.place.getImages().contains(this)) {
+            this.place.addImage(this);
+        }
+    }
 }

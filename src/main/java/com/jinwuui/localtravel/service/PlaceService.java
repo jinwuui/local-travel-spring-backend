@@ -1,8 +1,10 @@
 package com.jinwuui.localtravel.service;
 
 import com.jinwuui.localtravel.domain.Category;
+import com.jinwuui.localtravel.domain.Image;
 import com.jinwuui.localtravel.domain.Place;
 import com.jinwuui.localtravel.domain.User;
+import com.jinwuui.localtravel.dto.service.PlaceDetailDto;
 import com.jinwuui.localtravel.dto.service.PlaceDto;
 import com.jinwuui.localtravel.dto.service.PlaceSimpleDto;
 import com.jinwuui.localtravel.exception.PlaceNotFoundException;
@@ -16,7 +18,9 @@ import com.jinwuui.localtravel.util.GeoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -165,18 +169,36 @@ public class PlaceService {
                 .collect(Collectors.toList());
     }
 
-    public PlaceDto read(Long userId, Long placeId) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(PlaceNotFoundException::new);
+    @Transactional(readOnly = true)
+    public PlaceDetailDto read(Optional<Long> optionalUserId, Long placeId) {
+        Place place = placeRepository.findByIdWithCategories(placeId)
+            .orElseThrow(PlaceNotFoundException::new);
 
-        // TODO: 카테고리 조회
+        List<String> categories = Optional.ofNullable(place.getPlaceCategories())
+                .map(placeCategories -> placeCategories.stream()
+                        .map(placeCategory -> placeCategory.getCategory().getName())
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
-        // TODO: 사진 조회
+        List<String> imageUrls = Optional.ofNullable(place.getImages())
+                .map(images -> images.stream()
+                        .map(Image::getUrl)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
-        // TODO: userId 존재하면 favorite 조회
+        boolean isFavorite = optionalUserId.isPresent() &&  
+                bookmarkRepository.existsByUserIdAndPlaceId(optionalUserId.get(), placeId);
 
-        return PlaceDto.builder()
+        return PlaceDetailDto.builder()
+                .placeId(place.getId())
+                .name(place.getName())
+                .description(place.getDescription())
+                .lat(place.getLat())
+                .lng(place.getLng())
+                .rating(place.getRating())
+                .isFavorite(isFavorite)
+                .categories(categories)
+                .imageUrls(imageUrls)
                 .build();
     }
-
 }

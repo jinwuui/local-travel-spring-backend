@@ -3,6 +3,7 @@ package com.jinwuui.localtravel.controller;
 import com.jinwuui.localtravel.config.UserPrincipal;
 import com.jinwuui.localtravel.dto.request.PlaceCreateRequest;
 import com.jinwuui.localtravel.dto.response.PagingResponse;
+import com.jinwuui.localtravel.dto.response.PlaceDetailResponse;
 import com.jinwuui.localtravel.dto.response.PlaceResponse;
 import com.jinwuui.localtravel.service.PlaceCreationService;
 import com.jinwuui.localtravel.service.PlaceService;
@@ -15,6 +16,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static com.jinwuui.localtravel.dto.mapper.PlaceMapper.*;
+
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -51,7 +54,8 @@ public class PlaceController {
     }
 
     @GetMapping("/{placeId}")
-    public String get(@PathVariable String placeId) {
-        return "hi im place";
+    public PlaceDetailResponse get(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String placeId) {
+        Optional<Long> optionalUserId = Optional.ofNullable(userPrincipal.getUserId());
+        return toPlaceDetailResponse(placeService.read(optionalUserId, Long.parseLong(placeId)));
     }
 }
