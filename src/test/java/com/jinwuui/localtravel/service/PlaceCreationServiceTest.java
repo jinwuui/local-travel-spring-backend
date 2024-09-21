@@ -33,6 +33,9 @@ class PlaceCreationServiceTest {
     private CategoryRepository categoryRepository;
 
     @Autowired
+    private PlaceCategoryRepository placeCategoryRepository;
+
+    @Autowired
     private S3Repository s3Repository;
 
     @Autowired
@@ -40,6 +43,7 @@ class PlaceCreationServiceTest {
 
     @AfterEach
     void clean() {
+        placeCategoryRepository.deleteAll();
         categoryRepository.deleteAll();
         placeRepository.deleteAll();
         userRepository.deleteAll();

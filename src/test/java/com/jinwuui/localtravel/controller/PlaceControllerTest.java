@@ -2,6 +2,7 @@ package com.jinwuui.localtravel.controller;
 
 import com.jinwuui.localtravel.config.CustomMockUser;
 import com.jinwuui.localtravel.repository.CategoryRepository;
+import com.jinwuui.localtravel.repository.PlaceCategoryRepository;
 import com.jinwuui.localtravel.repository.PlaceRepository;
 import com.jinwuui.localtravel.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -31,27 +32,21 @@ class PlaceControllerTest {
 
     @Autowired
     private CategoryRepository categoryRepository;
-
     @Autowired
     private PlaceRepository placeRepository;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PlaceCategoryRepository placeCategoryRepository;
+
     @AfterEach
     void clean() {
+        placeCategoryRepository.deleteAll();
         categoryRepository.deleteAll();
         placeRepository.deleteAll();
         userRepository.deleteAll();
-    }
-
-    @Test
-    @CustomMockUser
-    @DisplayName("장소 조회")
-    void test() throws Exception {
-        mockMvc.perform(get("/api/v1/places"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("hi im place"));
     }
 
     @Test
@@ -188,5 +183,22 @@ class PlaceControllerTest {
         mockMvc.perform(builder.param("content", "Sample content")
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @CustomMockUser
+    @DisplayName("장소 조회 - 유저")
+    void getListForUser() throws Exception {
+        // given
+        mockMvc.perform(get("/api/v1/places"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("장소 조회 - 유저")
+    void getListForAnonymous() throws Exception {
+        // given
+        mockMvc.perform(get("/api/v1/places"))
+                .andExpect(status().isOk());
     }
 }

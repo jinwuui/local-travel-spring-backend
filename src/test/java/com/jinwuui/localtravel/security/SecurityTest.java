@@ -2,6 +2,7 @@ package com.jinwuui.localtravel.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jinwuui.localtravel.config.CustomMockUser;
+import com.jinwuui.localtravel.repository.PlaceRepository;
 import com.jinwuui.localtravel.repository.UserRepository;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +34,12 @@ public class SecurityTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PlaceRepository placeRepository;
+
     @AfterEach
     void clean() {
+        placeRepository.deleteAll();
         userRepository.deleteAll();
     }
 

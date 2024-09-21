@@ -43,7 +43,7 @@ public class Place {
     @Lob
     private List<Double> embedding;
 
-    @OneToMany(mappedBy = "place")
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL)
     private List<PlaceCategory> placeCategories;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
