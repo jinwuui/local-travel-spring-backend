@@ -35,22 +35,19 @@ public class PlaceController {
     @GetMapping()
     public PagingResponse<PlaceResponse> getList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         if (userPrincipal != null) {
-            placeService.readForUser(userPrincipal.getUserId());
+            return toPagingPlaceResponse(placeService.readForUser(userPrincipal.getUserId()));
         } else {
-            placeService.readForAnonymous();
+            return toPagingPlaceResponse(placeService.readForAnonymous());
         }
-        return null;
     }
 
     @GetMapping(params = "category")
-    public PagingResponse<PlaceResponse> getListByCategory(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam(name = "category") String category) {
-        if (userPrincipal != null) { 
-            placeService.readForUserByCategory(userPrincipal.getUserId(), category);
-        } else { 
-            placeService.readForAnonymousByCategory(category);
+    public PagingResponse<PlaceResponse> getListByCategory(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam String category) {
+        if (userPrincipal != null) {
+            return toPagingPlaceResponse(placeService.readForUserByCategory(userPrincipal.getUserId(), category));
+        } else {
+            return toPagingPlaceResponse(placeService.readForAnonymousByCategory(category));
         }
-        return null;
-        // return placeService.readPlaceListForUser(userPrincipal.getUserId(), category);
     }
 
     @GetMapping("/{placeId}")
