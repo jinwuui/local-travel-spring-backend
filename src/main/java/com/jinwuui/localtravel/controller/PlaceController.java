@@ -2,6 +2,7 @@ package com.jinwuui.localtravel.controller;
 
 import com.jinwuui.localtravel.config.UserPrincipal;
 import com.jinwuui.localtravel.dto.request.PlaceCreateRequest;
+import com.jinwuui.localtravel.dto.response.BookmarkedPlaceResponse;
 import com.jinwuui.localtravel.dto.response.PagingResponse;
 import com.jinwuui.localtravel.dto.response.PlaceDetailResponse;
 import com.jinwuui.localtravel.dto.response.PlaceResponse;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,5 +59,11 @@ public class PlaceController {
     public PlaceDetailResponse get(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String placeId) {
         Optional<Long> optionalUserId = Optional.ofNullable(userPrincipal.getUserId());
         return toPlaceDetailResponse(placeService.read(optionalUserId, Long.parseLong(placeId)));
+    }
+
+    @GetMapping("/bookmarks")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public PagingResponse<BookmarkedPlaceResponse> getBookmarkList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return toBookmarkedPlaceResponse(placeService.readBookmarks(userPrincipal.getUserId()));
     }
 }

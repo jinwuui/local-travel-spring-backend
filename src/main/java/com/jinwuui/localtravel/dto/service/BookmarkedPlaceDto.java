@@ -7,24 +7,20 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PlaceDetailDto {
+public class BookmarkedPlaceDto {
 
     private Long placeId;
-    
+
     private String name;
-    
+
     private String description;
-    
-    private Double lat;
-    
-    private Double lng;
-    
+
     private Long rating;
-    
+
+    private String country;
+
     private Boolean isBookmarked;
     
-    private List<String> categories;
-    
     private List<String> imageUrls;
-
+    
 }

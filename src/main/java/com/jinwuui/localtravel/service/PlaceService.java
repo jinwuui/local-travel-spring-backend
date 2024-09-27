@@ -4,6 +4,7 @@ import com.jinwuui.localtravel.domain.Category;
 import com.jinwuui.localtravel.domain.Image;
 import com.jinwuui.localtravel.domain.Place;
 import com.jinwuui.localtravel.domain.User;
+import com.jinwuui.localtravel.dto.service.BookmarkedPlaceDto;
 import com.jinwuui.localtravel.dto.service.PlaceDetailDto;
 import com.jinwuui.localtravel.dto.service.PlaceDto;
 import com.jinwuui.localtravel.dto.service.PlaceSimpleDto;
@@ -83,7 +84,7 @@ public class PlaceService {
 
         return places.stream()
                 .map((Place place) -> {
-                    boolean isFavorite = bookmarkRepository.existsByUserIdAndPlaceId(userId, place.getId());
+                    boolean isBookmarked = bookmarkRepository.existsByUserIdAndPlaceId(userId, place.getId());
 
                     List<String> categoryNames = place.getPlaceCategories().stream()
                             .map(placeCategory -> placeCategory.getCategory().getName())
@@ -95,7 +96,7 @@ public class PlaceService {
                             .lat(place.getLat())
                             .lng(place.getLng())
                             .categories(categoryNames)
-                            .isFavorite(isFavorite)
+                            .isBookmarked(isBookmarked)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -117,7 +118,7 @@ public class PlaceService {
                             .lat(place.getLat())
                             .lng(place.getLng())
                             .categories(categoryNames)
-                            .isFavorite(false)
+                            .isBookmarked(false)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -129,7 +130,7 @@ public class PlaceService {
 
         return places.stream()
                 .map((Place place) -> {
-                    boolean isFavorite = bookmarkRepository.existsByUserIdAndPlaceId(userId, place.getId());
+                    boolean isBookmarked = bookmarkRepository.existsByUserIdAndPlaceId(userId, place.getId());
 
                     List<String> categoryNames = place.getPlaceCategories().stream()
                             .map(placeCategory -> placeCategory.getCategory().getName())
@@ -141,7 +142,7 @@ public class PlaceService {
                             .lat(place.getLat())
                             .lng(place.getLng())
                             .categories(categoryNames)
-                            .isFavorite(isFavorite)
+                            .isBookmarked(isBookmarked)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -163,7 +164,7 @@ public class PlaceService {
                             .lat(place.getLat())
                             .lng(place.getLng())
                             .categories(categoryNames)
-                            .isFavorite(false)
+                            .isBookmarked(false)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -186,7 +187,7 @@ public class PlaceService {
                         .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
 
-        boolean isFavorite = optionalUserId.isPresent() &&  
+        boolean isBookmarked = optionalUserId.isPresent() &&  
                 bookmarkRepository.existsByUserIdAndPlaceId(optionalUserId.get(), placeId);
 
         return PlaceDetailDto.builder()
@@ -196,9 +197,38 @@ public class PlaceService {
                 .lat(place.getLat())
                 .lng(place.getLng())
                 .rating(place.getRating())
-                .isFavorite(isFavorite)
+                .isBookmarked(isBookmarked)
                 .categories(categories)
                 .imageUrls(imageUrls)
                 .build();
+    }
+    
+    @Transactional(readOnly = true)
+    public List<BookmarkedPlaceDto> readBookmarks(Long userId) {
+        if (userId == null) {
+            throw new UserNotFoundException();
+        }
+        
+        List<Place> bookmarkedPlaces = placeRepository.findBookmarkedPlacesWithImagesByUserId(userId);
+        
+        return bookmarkedPlaces.stream()
+            .map((Place place) -> {
+                List<String> imageUrls = Optional.ofNullable(place.getImages())
+                    .map(images -> images.stream()
+                        .map(Image::getUrl)
+                        .collect(Collectors.toList()))
+                    .orElse(Collections.emptyList());
+
+                return BookmarkedPlaceDto.builder()
+                    .placeId(place.getId())
+                    .name(place.getName())
+                    .description(place.getDescription())
+                    .rating(place.getRating())
+                    .country(place.getCountry())
+                    .isBookmarked(true)
+                    .imageUrls(imageUrls)
+                    .build();
+            })
+            .collect(Collectors.toList());
     }
 }

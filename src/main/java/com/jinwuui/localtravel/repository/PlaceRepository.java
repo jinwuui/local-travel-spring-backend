@@ -18,4 +18,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     @Query("SELECT DISTINCT p FROM Place p LEFT JOIN FETCH p.placeCategories pc LEFT JOIN FETCH pc.category WHERE p.id = :id")
     Optional<Place> findByIdWithCategories(Long id);
+
+    @Query("SELECT DISTINCT p FROM Place p JOIN p.bookmarks b LEFT JOIN FETCH p.images i WHERE b.user.id = :userId")
+    List<Place> findBookmarkedPlacesWithImagesByUserId(Long userId);
 }

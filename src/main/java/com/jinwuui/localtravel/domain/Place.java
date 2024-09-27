@@ -50,6 +50,9 @@ public class Place {
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarks;
+
     @ManyToOne
     @JoinColumn
     private User user;
@@ -97,6 +100,21 @@ public class Place {
         this.images.add(image);
         if (image.getPlace() != this) {
             image.setPlace(this);
+        }
+    }
+
+    public void addBookmark(User user) {
+        if (this.bookmarks == null) {
+            this.bookmarks = new ArrayList<>();
+        }
+
+        if (this.bookmarks.stream().noneMatch(b -> b.getUser().equals(user))) {
+            Bookmark bookmark = Bookmark.builder()
+                    .user(user)
+                    .place(this)
+                    .build();
+            this.bookmarks.add(bookmark);
+            user.getBookmarks().add(bookmark);
         }
     }
 
