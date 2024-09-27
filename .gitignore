@@ -122,3 +122,6 @@ fabric.properties
 # hodolog
 nodeenv-16
 HELP.md
+
+# api key file
+application-secret.yml
