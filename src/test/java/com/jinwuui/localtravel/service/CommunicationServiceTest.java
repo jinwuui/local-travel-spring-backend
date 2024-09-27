@@ -5,18 +5,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.jinwuui.localtravel.repository.AnnouncementRepository;
+import com.jinwuui.localtravel.repository.FeedbackRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 import com.jinwuui.localtravel.domain.Announcement;
+import com.jinwuui.localtravel.domain.Feedback;
+import com.jinwuui.localtravel.dto.service.FeedbackDto;
 import com.jinwuui.localtravel.dto.service.AnnouncementDto;
 
 import java.util.List;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
@@ -26,11 +31,15 @@ public class CommunicationServiceTest {
     private AnnouncementRepository announcementRepository;
 
     @Autowired
+    private FeedbackRepository feedbackRepository;
+
+    @Autowired
     private CommunicationService communicationService;
 
     @AfterEach
     void clean() {
         announcementRepository.deleteAll();
+        feedbackRepository.deleteAll();
     }
 
     @Test
@@ -94,5 +103,59 @@ public class CommunicationServiceTest {
 
         // then
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("피드백 등록")
+    void createFeedback() {
+        // given
+        FeedbackDto feedbackDto = FeedbackDto.builder()
+                .writer("테스트 작성자")
+                .content("테스트 피드백 내용")
+                .build();
+
+        // when
+        communicationService.createFeedback(feedbackDto);
+
+        // then
+        List<Feedback> savedFeedbacks = feedbackRepository.findAll();
+        assertThat(savedFeedbacks).hasSize(1);
+        assertThat(savedFeedbacks.get(0).getWriter()).isEqualTo("테스트 작성자");
+        assertThat(savedFeedbacks.get(0).getContent()).isEqualTo("테스트 피드백 내용");
+    }
+
+    @Test
+    @DisplayName("작성자가 없는 피드백 등록 성공")
+    void createFeedbackWithoutWriter() {
+        // given
+        FeedbackDto feedbackDto = FeedbackDto.builder()
+                .content("작성자 없는 피드백 내용")
+                .build();
+
+        // when
+        communicationService.createFeedback(feedbackDto);
+
+        // then
+        List<Feedback> savedFeedbacks = feedbackRepository.findAll();
+        assertThat(savedFeedbacks).hasSize(1);
+        assertThat(savedFeedbacks.get(0).getWriter()).isNull();
+        assertThat(savedFeedbacks.get(0).getContent()).isEqualTo("작성자 없는 피드백 내용");
+    }
+
+    @Test
+    @DisplayName("내용이 없는 피드백 등록 실패")
+    void createFeedbackWithoutContent() {
+        // given
+        FeedbackDto feedbackDto = FeedbackDto.builder()
+                .writer("테스트 작성자")
+                .build();
+
+        // when & then
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            communicationService.createFeedback(feedbackDto);
+        });
+
+        List<Feedback> savedFeedbacks = feedbackRepository.findAll();
+        assertThat(savedFeedbacks).isEmpty();
     }
 }

@@ -3,8 +3,10 @@ package com.jinwuui.localtravel.dto.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.jinwuui.localtravel.dto.request.FeedbackRequest;
 import com.jinwuui.localtravel.dto.response.AnnouncementResponse;
 import com.jinwuui.localtravel.dto.service.AnnouncementDto;
+import com.jinwuui.localtravel.dto.service.FeedbackDto;
 import com.jinwuui.localtravel.dto.response.PagingResponse;
 
 public class CommunicationMapper {
@@ -22,6 +24,13 @@ public class CommunicationMapper {
         return PagingResponse.<AnnouncementResponse>builder()
                 .size(responses.size())
                 .items(responses)
+                .build();
+    }
+
+    public static FeedbackDto toFeedbackDto(FeedbackRequest request) {
+        return FeedbackDto.builder()
+                .writer(request.getWriter())
+                .content(request.getContent())
                 .build();
     }
 }
