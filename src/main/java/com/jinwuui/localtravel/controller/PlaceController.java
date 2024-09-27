@@ -65,7 +65,7 @@ public class PlaceController {
     @GetMapping("/bookmarks")
     @PreAuthorize("hasRole('ROLE_USER')")
     public PagingResponse<BookmarkedPlaceResponse> getBookmarkList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return toBookmarkedPlaceResponse(placeService.readBookmarks(userPrincipal.getUserId()));
+        return toPagingBookmarkedPlaceResponse(placeService.readBookmarks(userPrincipal.getUserId()));
     }
 
     @PostMapping("/bookmarks/{placeId}")
