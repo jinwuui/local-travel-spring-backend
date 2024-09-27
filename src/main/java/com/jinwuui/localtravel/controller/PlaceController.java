@@ -2,6 +2,7 @@ package com.jinwuui.localtravel.controller;
 
 import com.jinwuui.localtravel.config.UserPrincipal;
 import com.jinwuui.localtravel.dto.request.PlaceCreateRequest;
+import com.jinwuui.localtravel.dto.response.BookmarkStatusResponse;
 import com.jinwuui.localtravel.dto.response.BookmarkedPlaceResponse;
 import com.jinwuui.localtravel.dto.response.PagingResponse;
 import com.jinwuui.localtravel.dto.response.PlaceDetailResponse;
@@ -65,5 +66,16 @@ public class PlaceController {
     @PreAuthorize("hasRole('ROLE_USER')")
     public PagingResponse<BookmarkedPlaceResponse> getBookmarkList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return toBookmarkedPlaceResponse(placeService.readBookmarks(userPrincipal.getUserId()));
+    }
+
+    @PostMapping("/bookmarks/{placeId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public BookmarkStatusResponse toggleBookmark(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long placeId) {
+        boolean isBookmarked = placeService.toggleBookmark(userPrincipal.getUserId(), placeId);
+        return BookmarkStatusResponse.builder()
+                .userId(userPrincipal.getUserId())
+                .placeId(placeId)
+                .isBookmarked(isBookmarked)
+                .build();
     }
 }

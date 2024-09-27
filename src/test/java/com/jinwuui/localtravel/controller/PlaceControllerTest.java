@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @Slf4j
@@ -642,6 +644,79 @@ class PlaceControllerTest {
             mockMvc.perform(get("/api/v1/places/bookmarks")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isUnauthorized());
+        }
+    }
+
+    @Nested
+    @DisplayName("북마크 토글 테스트")
+    class ToggleBookmarkTest {
+
+        @Test
+        @CustomMockUser
+        @DisplayName("북마크 토글 성공")
+        void toggleBookmarkSuccess() throws Exception {
+            // given
+            User user = userRepository.findAll().get(0);
+            Place place = Place.builder()
+                    .name("테스트 장소")
+                    .description("테스트 설명")
+                    .lat(37.5665)
+                    .lng(126.9780)
+                    .build();
+            placeRepository.save(place);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/places/bookmarks/" + place.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.userId").value(user.getId()))
+                    .andExpect(jsonPath("$.placeId").value(place.getId()))
+                    .andExpect(jsonPath("$.isBookmarked").value(true));
+
+            // 북마크가 추가되었는지 확인
+            assertTrue(bookmarkRepository.existsByUserIdAndPlaceId(user.getId(), place.getId()));
+
+            // 다시 토글하여 북마크 제거
+            mockMvc.perform(post("/api/v1/places/bookmarks/" + place.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.userId").value(user.getId()))
+                    .andExpect(jsonPath("$.placeId").value(place.getId()))
+                    .andExpect(jsonPath("$.isBookmarked").value(false));
+
+            // 북마크가 제거되었는지 확인
+            assertFalse(bookmarkRepository.existsByUserIdAndPlaceId(user.getId(), place.getId()));
+        }
+
+        @Test
+        @DisplayName("비회원이 북마크 토글 시도 시 인증 오류")
+        void toggleBookmarkUnauthorized() throws Exception {
+            // given
+            Place place = Place.builder()
+                    .name("테스트 장소")
+                    .description("테스트 설명")
+                    .lat(37.5665)
+                    .lng(126.9780)
+                    .build();
+            placeRepository.save(place);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/places/bookmarks/" + place.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @CustomMockUser
+        @DisplayName("존재하지 않는 장소 ID로 북마크 토글 시 예외 발생")
+        void toggleBookmarkNonExistentPlace() throws Exception {
+            // given
+            Long nonExistentPlaceId = 9999L;
+
+            // when & then
+            mockMvc.perform(post("/api/v1/places/bookmarks/" + nonExistentPlaceId)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest());
         }
     }
 }

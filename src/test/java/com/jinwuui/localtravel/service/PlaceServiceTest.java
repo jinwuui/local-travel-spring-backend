@@ -3,6 +3,7 @@ package com.jinwuui.localtravel.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -21,6 +22,8 @@ import com.jinwuui.localtravel.domain.Place;
 import com.jinwuui.localtravel.domain.User;
 import com.jinwuui.localtravel.dto.service.PlaceDetailDto;
 import com.jinwuui.localtravel.dto.service.PlaceSimpleDto;
+import com.jinwuui.localtravel.exception.PlaceNotFoundException;
+import com.jinwuui.localtravel.exception.UserNotFoundException;
 import com.jinwuui.localtravel.dto.service.BookmarkedPlaceDto;
 import com.jinwuui.localtravel.repository.BookmarkRepository;
 import com.jinwuui.localtravel.repository.CategoryRepository;
@@ -605,4 +608,112 @@ public class PlaceServiceTest {
         assertEquals(1, dto.getImageUrls().size());
         assertTrue(dto.getImageUrls().contains("http://example.com/image1.jpg"));
     }
+
+    @Test
+    @DisplayName("북마크 토글 테스트")
+    void toggleBookmark() {
+        // given
+        User user = User.builder()
+                .email("test@example.com")
+                .password("password")
+                .nickname("테스트 유저")
+                .build();
+        userRepository.save(user);
+
+        Place place = Place.builder()
+                .name("테스트 장소")
+                .description("테스트 장소 설명")
+                .lat(37.5665)
+                .lng(126.9780)
+                .rating(4L)
+                .build();
+        placeRepository.save(place);
+
+        // when & then
+        // 북마크 추가
+        boolean isBookmarked = placeService.toggleBookmark(user.getId(), place.getId());
+        assertEquals(true, isBookmarked);
+        assertTrue(bookmarkRepository.existsByUserIdAndPlaceId(user.getId(), place.getId()));
+
+        // 북마크 제거
+        isBookmarked = placeService.toggleBookmark(user.getId(), place.getId());
+        assertEquals(false, isBookmarked);
+        assertFalse(bookmarkRepository.existsByUserIdAndPlaceId(user.getId(), place.getId()));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 유저 ID로 북마크 토글 시 예외 발생")
+    void toggleBookmarkWithNonExistentUser() {
+        // given
+        Long nonExistentUserId = 9999L;
+        Place place = Place.builder()
+                .name("테스트 장소")
+                .description("테스트 장소 설명")
+                .lat(37.5665)
+                .lng(126.9780)
+                .rating(4L)
+                .build();
+        placeRepository.save(place);
+
+        // when & then
+        assertThrows(UserNotFoundException.class, () -> {
+            placeService.toggleBookmark(nonExistentUserId, place.getId());
+        });
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 장소 ID로 북마크 토글 시 예외 발생")
+    void toggleBookmarkWithNonExistentPlace() {
+        // given
+        User user = User.builder()
+                .email("test@example.com")
+                .password("password")
+                .nickname("테스트 유저")
+                .build();
+        userRepository.save(user);
+        
+        Long nonExistentPlaceId = 9999L;
+
+        // when & then
+        assertThrows(PlaceNotFoundException.class, () -> {
+            placeService.toggleBookmark(user.getId(), nonExistentPlaceId);
+        });
+    }
+
+    @Test
+    @DisplayName("userId가 null일 때 북마크 토글 시 예외 발생")
+    void toggleBookmarkWithNullUserId() {
+        // given
+        Place place = Place.builder()
+                .name("테스트 장소")
+                .description("테스트 장소 설명")
+                .lat(37.5665)
+                .lng(126.9780)
+                .rating(4L)
+                .build();
+        placeRepository.save(place);  
+
+        // when & then
+        assertThrows(IllegalArgumentException.class, () -> {
+                placeService.toggleBookmark(null, place.getId());
+        });
+    }
+
+    @Test
+    @DisplayName("placeId가 null일 때 북마크 토글 시 예외 발생")
+    void toggleBookmarkWithNullPlaceId() {
+        // given
+        User user = User.builder()
+                .email("test@example.com")
+                .password("password")
+                .nickname("테스트 유저")
+                .build();
+        userRepository.save(user);
+        
+        // when & then
+        assertThrows(IllegalArgumentException.class, () -> {
+                placeService.toggleBookmark(user.getId(), null);
+        });
+    }
+
 }

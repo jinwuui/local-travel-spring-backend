@@ -1,5 +1,6 @@
 package com.jinwuui.localtravel.service;
 
+import com.jinwuui.localtravel.domain.Bookmark;
 import com.jinwuui.localtravel.domain.Category;
 import com.jinwuui.localtravel.domain.Image;
 import com.jinwuui.localtravel.domain.Place;
@@ -230,5 +231,32 @@ public class PlaceService {
                     .build();
             })
             .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public boolean toggleBookmark(Long userId, Long placeId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId는 null일 수 없습니다.");
+        }
+        if (placeId == null) {
+            throw new IllegalArgumentException("placeId는 null일 수 없습니다.");
+        }
+        
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(PlaceNotFoundException::new);
+
+        boolean isBookmarked = bookmarkRepository.existsByUserIdAndPlaceId(userId, placeId);
+        if (isBookmarked) {
+            bookmarkRepository.deleteByUserAndPlace(user, place);
+        } else {
+            Bookmark bookmark = Bookmark.builder()
+                    .user(user)
+                    .place(place)
+                    .build();
+            bookmarkRepository.save(bookmark);
+        }
+        return !isBookmarked;
     }
 }
