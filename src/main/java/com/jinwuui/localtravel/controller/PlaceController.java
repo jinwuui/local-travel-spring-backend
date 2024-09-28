@@ -34,6 +34,7 @@ public class PlaceController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public Long post(@AuthenticationPrincipal UserPrincipal userPrincipal, @ModelAttribute @Valid PlaceCreateRequest placeCreateRequest) {
         return placeCreationService.createPlaceWithImages(userPrincipal.getUserId(), toPlaceDto(placeCreateRequest));
     }
@@ -58,7 +59,8 @@ public class PlaceController {
 
     @GetMapping("/{placeId}")
     public PlaceDetailResponse get(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String placeId) {
-        Optional<Long> optionalUserId = Optional.ofNullable(userPrincipal.getUserId());
+        Optional<Long> optionalUserId = Optional.ofNullable(userPrincipal)
+                .map(UserPrincipal::getUserId);
         return toPlaceDetailResponse(placeService.read(optionalUserId, Long.parseLong(placeId)));
     }
 
