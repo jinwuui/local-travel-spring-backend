@@ -8,7 +8,6 @@ import com.jinwuui.localtravel.dto.service.AutocompleteDto;
 import com.jinwuui.localtravel.repository.PlaceRepository;
 import com.jinwuui.localtravel.util.EmbeddingUtil;
 
-import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

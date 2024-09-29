@@ -92,9 +92,10 @@ public class SearchControllerTest {
                 .param("keyword", "서울")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.size").value(1L))
+                .andExpect(jsonPath("$.size").value(2L))
                 .andExpect(jsonPath("$.items").isArray())
-                .andExpect(jsonPath("$.items[0].name").value("서울특별시"));
+                .andExpect(jsonPath("$.items[0].name").value("서울특별시"))
+                .andExpect(jsonPath("$.items[1].name").value("도쿄시"));
     }
 
     @Test

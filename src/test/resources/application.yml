@@ -12,8 +12,10 @@ spring:
     redis:
       host: localhost
       port: 6379
-      cache:
-        expiration: 7776000 # 90일
+  cache:
+    type: redis
+    redis:
+      time-to-live: 7776000 # 90일
 
   datasource:
     url: jdbc:postgresql://localhost:5432/testdb
@@ -22,6 +24,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:

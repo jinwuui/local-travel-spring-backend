@@ -1,5 +1,6 @@
 package com.jinwuui.localtravel.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,10 +11,13 @@ import com.jinwuui.localtravel.domain.Place;
 import com.jinwuui.localtravel.repository.PlaceRepository;
 import com.jinwuui.localtravel.util.EmbeddingUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+@Slf4j
 @SpringBootTest
 @Transactional
 public class SearchServiceTest {
@@ -28,7 +32,35 @@ public class SearchServiceTest {
     private EmbeddingUtil embeddingUtil;
 
     @Test
-    void testGetAutocompleteResults() {
+    @DisplayName("검색 자동 완성 테스트 - 유사도 기준값 테스트")
+    void getAutocompleteThreshold() {
+        // given
+        // 츠케맨 장소가 등록되어 있을 때 '라멘'을 입력했을때 연관 검색어로 등장할 것
+        Place tsukemen = Place.builder()
+                .name("구마모토 동네 츠케맨집")
+                .description("처음 츠케맨을 먹은 이후로 이렇게 맛있는 집은 처음입니다. 국물이 진하고, 특히 면이 정말 맛있습니다.")
+                .country("일본")
+                .lat(32.79640727633594)
+                .lng(130.71849453454735)
+                .rating(5L)
+                .build();
+        
+        tsukemen.setEmbedding(embeddingUtil.fetchEmbedding(tsukemen.getEmbeddingText()));
+
+        placeRepository.save(tsukemen);
+
+        // when
+        log.info(">>> {}", tsukemen.getEmbeddingText());
+        List<AutocompleteDto> results = searchService.getAutocompleteResults("tsukemen");
+
+        // then
+        assertNotNull(results);
+        assertEquals(1, results.size());
+    }
+
+    @Test
+    @DisplayName("검색 자동 완성 테스트")
+    void getAutocompleteResults() {
         // given
         Place place1 = Place.builder()
                 .name("서울특별시")
@@ -76,7 +108,8 @@ public class SearchServiceTest {
     }
 
     @Test
-    void testGetAutocompleteResultsWithSimilarData() {
+    @DisplayName("검색 자동 완성 테스트")
+    void getAutocompleteResultsWithSimilarData() {
         // given
         Place place1 = Place.builder()
                 .name("서울특별시")
@@ -112,7 +145,7 @@ public class SearchServiceTest {
                 .build();
         Place place5 = Place.builder()
                 .name("나고야")
-                .description("일본의 해양도시")
+                .description("일본의 대도시")
                 .country("일본")
                 .lat(35.172340)
                 .lng(136.908325)
