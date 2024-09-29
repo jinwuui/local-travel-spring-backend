@@ -27,6 +27,7 @@ import com.jinwuui.localtravel.exception.UserNotFoundException;
 import com.jinwuui.localtravel.dto.service.BookmarkedPlaceDto;
 import com.jinwuui.localtravel.repository.BookmarkRepository;
 import com.jinwuui.localtravel.repository.CategoryRepository;
+import com.jinwuui.localtravel.repository.PlaceCategoryRepository;
 import com.jinwuui.localtravel.repository.PlaceRepository;
 import com.jinwuui.localtravel.repository.UserRepository;
 
@@ -54,10 +55,14 @@ public class PlaceServiceTest {
     private CategoryRepository categoryRepository;
 
     @Autowired
+    private PlaceCategoryRepository placeCategoryRepository;
+
+    @Autowired
     private EntityManager entityManager;
 
     @AfterEach
     void clearAll() {
+        placeCategoryRepository.deleteAll();
         bookmarkRepository.deleteAll();
         categoryRepository.deleteAll();
         placeRepository.deleteAll();

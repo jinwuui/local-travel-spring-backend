@@ -28,8 +28,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
-
 @Slf4j
 @Configuration
 @EnableWebSecurity(debug = false)
@@ -43,8 +41,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
                 .requestMatchers("/favicon.ico")
-                .requestMatchers("/error")
-                .requestMatchers(toH2Console());
+                .requestMatchers("/error");
     }
 
     @Bean

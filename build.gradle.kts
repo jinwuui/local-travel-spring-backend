@@ -47,7 +47,11 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
-    runtimeOnly("com.h2database:h2")
+    // DB
+    runtimeOnly("org.postgresql:postgresql")
+
+    // Hypersistence Utils 의존성
+    implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
