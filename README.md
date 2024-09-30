@@ -34,7 +34,7 @@ ORM: JPA(Hibernate)
     │   ├── java
     │   │   └── com.jinwuui.localtravel
     │   │       ├── config                # 설정 관련 파일
-    │   │       │   ├── filter
+    │   │       │   ├── filter            # 보안 필터 (로그인 및 JWT 인증)
     │   │       │   └── handler
     │   │       ├── controller            # 컨트롤러 (API 엔드포인트)
     │   │       ├── domain                # 엔티티
