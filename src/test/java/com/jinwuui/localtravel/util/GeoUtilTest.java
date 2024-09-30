@@ -43,7 +43,7 @@ public class GeoUtilTest {
         double lat = 37.239853;
         double lng = 131.869382;
         geoUtil.setMockResponse(lat, lng, "대한민국");
-        
+
         // when
         String countryName = geoUtil.getCountryName(lat, lng);
 

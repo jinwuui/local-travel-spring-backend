@@ -10,21 +10,21 @@ import lombok.Getter;
 public class PlaceDetailDto {
 
     private Long placeId;
-    
+
     private String name;
-    
+
     private String description;
-    
+
     private Double lat;
-    
+
     private Double lng;
-    
+
     private Long rating;
-    
+
     private Boolean isBookmarked;
-    
+
     private List<String> categories;
-    
+
     private List<String> imageUrls;
 
 }

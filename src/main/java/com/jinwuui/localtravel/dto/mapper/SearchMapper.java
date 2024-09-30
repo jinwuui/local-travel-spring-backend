@@ -9,7 +9,8 @@ import com.jinwuui.localtravel.dto.service.AutocompleteDto;
 
 public class SearchMapper {
 
-    public static PagingResponse<AutocompleteResponse> toPagingAutocompleteResponse(List<AutocompleteDto> autocompleteDtos) {
+    public static PagingResponse<AutocompleteResponse> toPagingAutocompleteResponse(
+            List<AutocompleteDto> autocompleteDtos) {
         List<AutocompleteResponse> responses = autocompleteDtos.stream()
                 .map(dto -> AutocompleteResponse.builder()
                         .placeId(dto.getPlaceId())

@@ -20,7 +20,7 @@ public class BookmarkedPlaceDto {
     private String country;
 
     private Boolean isBookmarked;
-    
+
     private List<String> imageUrls;
-    
+
 }

@@ -8,11 +8,11 @@ import lombok.Getter;
 public class AutocompleteResponse {
 
     private Long placeId;
-    
+
     private String name;
-    
+
     private String description;
-    
+
     private String country;
-    
+
 }

@@ -10,5 +10,5 @@ public class FeedbackDto {
     private String writer;
 
     private String content;
-    
+
 }

@@ -8,5 +8,5 @@ import com.jinwuui.localtravel.domain.Announcement;
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
 
     List<Announcement> findTop10ByOrderByCreatedAtDesc();
-    
+
 }

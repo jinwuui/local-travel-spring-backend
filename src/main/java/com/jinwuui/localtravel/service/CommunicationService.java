@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class CommunicationService {
 
     private final AnnouncementRepository announcementRepository;
-    
+
     private final FeedbackRepository feedbackRepository;
 
     public List<AnnouncementDto> readAnnouncements() {

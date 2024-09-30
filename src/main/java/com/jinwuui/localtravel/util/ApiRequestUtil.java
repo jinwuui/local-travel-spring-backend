@@ -35,11 +35,13 @@ public abstract class ApiRequestUtil {
         return executeRequest(url, apiKey, null, GET, authType, authParamName);
     }
 
-    protected JsonNode postRequest(String url, String apiKey, Map<String, Object> requestBody, AuthType authType, String authParamName) {
+    protected JsonNode postRequest(String url, String apiKey, Map<String, Object> requestBody, AuthType authType,
+            String authParamName) {
         return executeRequest(url, apiKey, requestBody, POST, authType, authParamName);
     }
 
-    protected JsonNode executeRequest(String url, String apiKey, Map<String, Object> requestBody, HttpMethod method, AuthType authType, String authParamName) {
+    protected JsonNode executeRequest(String url, String apiKey, Map<String, Object> requestBody, HttpMethod method,
+            AuthType authType, String authParamName) {
         String cacheKey = generateCacheKey(url, requestBody);
 
         return getCachedResponse(cacheKey)
@@ -52,12 +54,12 @@ public abstract class ApiRequestUtil {
 
     private String generateCacheKey(String url, Map<String, Object> requestBody) {
         StringBuilder keyBuilder = new StringBuilder(url);
-        
+
         if (requestBody != null) {
             requestBody.entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
                     .forEach(entry -> keyBuilder.append("_")
-                    .append(entry.getKey()).append("_").append(entry.getValue()));
+                            .append(entry.getKey()).append("_").append(entry.getValue()));
         }
 
         return keyBuilder.toString();
@@ -74,7 +76,8 @@ public abstract class ApiRequestUtil {
         }
     }
 
-    private JsonNode sendApiRequest(String url, String apiKey, Map<String, Object> requestBody, HttpMethod method, AuthType authType, String authParamName) {
+    private JsonNode sendApiRequest(String url, String apiKey, Map<String, Object> requestBody, HttpMethod method,
+            AuthType authType, String authParamName) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -95,7 +98,8 @@ public abstract class ApiRequestUtil {
         }
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(builder.toUriString(), method, request, String.class);
+        ResponseEntity<String> responseEntity =
+                restTemplate.exchange(builder.toUriString(), method, request, String.class);
         return parseJsonNode(responseEntity.getBody());
     }
 

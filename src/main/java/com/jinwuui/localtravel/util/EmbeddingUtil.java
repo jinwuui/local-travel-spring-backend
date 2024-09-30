@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class EmbeddingUtil extends ApiRequestUtil {
-    
+
     @Value("${key.api.openai}")
     private String openaiApiKey;
 
@@ -29,7 +29,8 @@ public class EmbeddingUtil extends ApiRequestUtil {
     @Value("${openai.embedding.model}")
     private String embeddingModel;
 
-    public EmbeddingUtil(RedisTemplate<String, String> redisTemplate, RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public EmbeddingUtil(RedisTemplate<String, String> redisTemplate, RestTemplate restTemplate,
+            ObjectMapper objectMapper) {
         super(redisTemplate, restTemplate, objectMapper);
     }
 
@@ -38,7 +39,8 @@ public class EmbeddingUtil extends ApiRequestUtil {
         requestBody.put("input", text);
         requestBody.put("model", embeddingModel);
 
-        JsonNode response = executeRequest(openaiEmbeddingApiUrl, openaiApiKey, requestBody, HttpMethod.POST, AuthType.BEARER, null);
+        JsonNode response = executeRequest(openaiEmbeddingApiUrl, openaiApiKey, requestBody, HttpMethod.POST,
+                AuthType.BEARER, null);
         return extractEmbedding(response);
     }
 

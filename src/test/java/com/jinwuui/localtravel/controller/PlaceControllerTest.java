@@ -72,20 +72,22 @@ class PlaceControllerTest {
     @DisplayName("장소 생성")
     void postPlace() throws Exception {
         // given
-        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png", "image2 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg",
+                "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png",
+                "image2 content".getBytes(StandardCharsets.UTF_8));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
-                        .file(file1)
-                        .file(file2)
-                        .param("name", "Sample name")
-                        .param("description", "Sample description")
-                        .param("lat", "33.1111")
-                        .param("lng", "128.1111")
-                        .param("rating", "1")
-                        .param("categories", "['모험', '음식']")
-                        .characterEncoding("UTF-8"))
+                .file(file1)
+                .file(file2)
+                .param("name", "Sample name")
+                .param("description", "Sample description")
+                .param("lat", "33.1111")
+                .param("lng", "128.1111")
+                .param("rating", "1")
+                .param("categories", "['모험', '음식']")
+                .characterEncoding("UTF-8"))
                 .andExpect(status().isCreated());
     }
 
@@ -95,13 +97,13 @@ class PlaceControllerTest {
     void postPlaceNullImages() throws Exception {
         // expected
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
-                        .param("name", "Sample name")
-                        .param("description", "Sample description")
-                        .param("lat", "33.1111")
-                        .param("lng", "128.1111")
-                        .param("rating", "1")
-                        .param("categories", "['모험', '음식']")
-                        .characterEncoding("UTF-8"))
+                .param("name", "Sample name")
+                .param("description", "Sample description")
+                .param("lat", "33.1111")
+                .param("lng", "128.1111")
+                .param("rating", "1")
+                .param("categories", "['모험', '음식']")
+                .characterEncoding("UTF-8"))
                 .andExpect(status().isCreated());
     }
 
@@ -110,19 +112,21 @@ class PlaceControllerTest {
     @DisplayName("장소 생성 실패 - 등록 정보 누락")
     void postPlaceFailMissingInput() throws Exception {
         // given
-        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png", "image2 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg",
+                "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png",
+                "image2 content".getBytes(StandardCharsets.UTF_8));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
-                        .file(file1)
-                        .file(file2)
-                        .param("description", "Sample description")
-                        .param("lat", "33.1111")
-                        .param("lng", "128.1111")
-                        .param("rating", "1")
-                        .param("categories", "['모험', '음식']")
-                        .characterEncoding("UTF-8"))
+                .file(file1)
+                .file(file2)
+                .param("description", "Sample description")
+                .param("lat", "33.1111")
+                .param("lng", "128.1111")
+                .param("rating", "1")
+                .param("categories", "['모험', '음식']")
+                .characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -131,19 +135,21 @@ class PlaceControllerTest {
     @DisplayName("장소 생성 실패 - 카테고리 null")
     void postPlaceFailNullCategories() throws Exception {
         // given
-        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png", "image2 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg",
+                "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png",
+                "image2 content".getBytes(StandardCharsets.UTF_8));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
-                        .file(file1)
-                        .file(file2)
-                        .param("name", "Sample name")
-                        .param("description", "Sample description")
-                        .param("lat", "33.1111")
-                        .param("lng", "128.1111")
-                        .param("rating", "1")
-                        .characterEncoding("UTF-8"))
+                .file(file1)
+                .file(file2)
+                .param("name", "Sample name")
+                .param("description", "Sample description")
+                .param("lat", "33.1111")
+                .param("lng", "128.1111")
+                .param("rating", "1")
+                .characterEncoding("UTF-8"))
                 .andExpect(status().isCreated());
     }
 
@@ -152,19 +158,21 @@ class PlaceControllerTest {
     @DisplayName("장소 생성 실패 - 등록 정보 누락")
     void postPlaceFail() throws Exception {
         // given
-        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png", "image2 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg",
+                "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.png", "image/png",
+                "image2 content".getBytes(StandardCharsets.UTF_8));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
-                        .file(file1)
-                        .file(file2)
-                        .param("description", "Sample description")
-                        .param("lat", "33.1111")
-                        .param("lng", "128.1111")
-                        .param("rating", "1")
-                        .param("categories", "['모험', '음식']")
-                        .characterEncoding("UTF-8"))
+                .file(file1)
+                .file(file2)
+                .param("description", "Sample description")
+                .param("lat", "33.1111")
+                .param("lng", "128.1111")
+                .param("rating", "1")
+                .param("categories", "['모험', '음식']")
+                .characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -174,8 +182,8 @@ class PlaceControllerTest {
     void postPlaceFailNoImage() throws Exception {
         // expected
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/places")
-                        .param("content", "Sample content")
-                        .characterEncoding("UTF-8"))
+                .param("content", "Sample content")
+                .characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -191,15 +199,14 @@ class PlaceControllerTest {
                     "images",
                     "image" + i + ".jpg",
                     "image/jpeg",
-                    ("image" + i + " content").getBytes(StandardCharsets.UTF_8)
-            );
+                    ("image" + i + " content").getBytes(StandardCharsets.UTF_8));
 
             builder.file(file);
         }
 
         // expected
         mockMvc.perform(builder.param("content", "Sample content")
-                        .characterEncoding("UTF-8"))
+                .characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -333,7 +340,7 @@ class PlaceControllerTest {
         void getListForAuthenticatedUserCheckBookmark() throws Exception {
             // given
             User user = userRepository.findAll().get(0);
-            
+
             Place place1 = Place.builder()
                     .name("테스트 장소1")
                     .description("테스트 설명1")
@@ -396,7 +403,7 @@ class PlaceControllerTest {
                     .lng(126.9781)
                     .rating(4L)
                     .build();
-            
+
             Place place3 = Place.builder()
                     .name("테스트 장소3")
                     .description("테스트 설명3")
@@ -453,7 +460,7 @@ class PlaceControllerTest {
                     .lng(126.9781)
                     .rating(4L)
                     .build();
-            
+
             Place place3 = Place.builder()
                     .name("테스트 장소3")
                     .description("테스트 설명3")
@@ -567,8 +574,7 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.imageUrls", hasSize(2)))
                     .andExpect(jsonPath("$.imageUrls", containsInAnyOrder(
                             "http://example.com/image1.jpg",
-                            "http://example.com/image2.jpg"
-                    )));
+                            "http://example.com/image2.jpg")));
         }
 
         @Test

@@ -102,7 +102,7 @@ public class PlaceServiceTest {
         // then
         assertNotNull(result);
         assertEquals(1, result.size());
-        
+
         PlaceSimpleDto placeSimpleDto = result.get(0);
         assertEquals(place.getName(), placeSimpleDto.getName());
         assertEquals(place.getLat(), placeSimpleDto.getLat());
@@ -448,7 +448,7 @@ public class PlaceServiceTest {
         placeRepository.save(place);
 
         entityManager.flush();
-        entityManager.clear();  
+        entityManager.clear();
 
         // when
         PlaceDetailDto result = placeService.read(Optional.of(user.getId()), place.getId());
@@ -676,7 +676,7 @@ public class PlaceServiceTest {
                 .nickname("테스트 유저")
                 .build();
         userRepository.save(user);
-        
+
         Long nonExistentPlaceId = 9999L;
 
         // when & then
@@ -696,11 +696,11 @@ public class PlaceServiceTest {
                 .lng(126.9780)
                 .rating(4L)
                 .build();
-        placeRepository.save(place);  
+        placeRepository.save(place);
 
         // when & then
         assertThrows(IllegalArgumentException.class, () -> {
-                placeService.toggleBookmark(null, place.getId());
+            placeService.toggleBookmark(null, place.getId());
         });
     }
 
@@ -714,10 +714,10 @@ public class PlaceServiceTest {
                 .nickname("테스트 유저")
                 .build();
         userRepository.save(user);
-        
+
         // when & then
         assertThrows(IllegalArgumentException.class, () -> {
-                placeService.toggleBookmark(user.getId(), null);
+            placeService.toggleBookmark(user.getId(), null);
         });
     }
 

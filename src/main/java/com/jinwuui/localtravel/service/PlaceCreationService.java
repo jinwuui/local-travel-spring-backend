@@ -16,7 +16,7 @@ public class PlaceCreationService {
 
     @Transactional
     public Long createPlaceWithImages(Long userId, PlaceDto placeDto) {
-        Place place  = placeService.create(userId, placeDto);
+        Place place = placeService.create(userId, placeDto);
 
         imageService.saveImages(place, placeDto.getImages());
 

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class PlaceSimpleDto {
-    
+
     private Long placeId;
 
     private String name;

@@ -102,7 +102,7 @@ public class PlaceService {
                 })
                 .collect(Collectors.toList());
     }
-    
+
     @Transactional(readOnly = true)
     public List<PlaceSimpleDto> readForAnonymous() {
         List<Place> places = placeRepository.findAllWithCategories();
@@ -174,7 +174,7 @@ public class PlaceService {
     @Transactional(readOnly = true)
     public PlaceDetailDto read(Optional<Long> optionalUserId, Long placeId) {
         Place place = placeRepository.findByIdWithCategories(placeId)
-            .orElseThrow(PlaceNotFoundException::new);
+                .orElseThrow(PlaceNotFoundException::new);
 
         List<String> categories = Optional.ofNullable(place.getPlaceCategories())
                 .map(placeCategories -> placeCategories.stream()
@@ -188,7 +188,7 @@ public class PlaceService {
                         .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
 
-        boolean isBookmarked = optionalUserId.isPresent() &&  
+        boolean isBookmarked = optionalUserId.isPresent() &&
                 bookmarkRepository.existsByUserIdAndPlaceId(optionalUserId.get(), placeId);
 
         return PlaceDetailDto.builder()
@@ -203,34 +203,34 @@ public class PlaceService {
                 .imageUrls(imageUrls)
                 .build();
     }
-    
+
     @Transactional(readOnly = true)
     public List<BookmarkedPlaceDto> readBookmarks(Long userId) {
         if (userId == null) {
             throw new UserNotFoundException();
         }
-        
-        List<Place> bookmarkedPlaces = placeRepository.findBookmarkedPlacesWithImagesByUserId(userId);
-        
-        return bookmarkedPlaces.stream()
-            .map((Place place) -> {
-                List<String> imageUrls = Optional.ofNullable(place.getImages())
-                    .map(images -> images.stream()
-                        .map(Image::getUrl)
-                        .collect(Collectors.toList()))
-                    .orElse(Collections.emptyList());
 
-                return BookmarkedPlaceDto.builder()
-                    .placeId(place.getId())
-                    .name(place.getName())
-                    .description(place.getDescription())
-                    .rating(place.getRating())
-                    .country(place.getCountry())
-                    .isBookmarked(true)
-                    .imageUrls(imageUrls)
-                    .build();
-            })
-            .collect(Collectors.toList());
+        List<Place> bookmarkedPlaces = placeRepository.findBookmarkedPlacesWithImagesByUserId(userId);
+
+        return bookmarkedPlaces.stream()
+                .map((Place place) -> {
+                    List<String> imageUrls = Optional.ofNullable(place.getImages())
+                            .map(images -> images.stream()
+                                    .map(Image::getUrl)
+                                    .collect(Collectors.toList()))
+                            .orElse(Collections.emptyList());
+
+                    return BookmarkedPlaceDto.builder()
+                            .placeId(place.getId())
+                            .name(place.getName())
+                            .description(place.getDescription())
+                            .rating(place.getRating())
+                            .country(place.getCountry())
+                            .isBookmarked(true)
+                            .imageUrls(imageUrls)
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -241,7 +241,7 @@ public class PlaceService {
         if (placeId == null) {
             throw new IllegalArgumentException("placeId는 null일 수 없습니다.");
         }
-        
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         Place place = placeRepository.findById(placeId)

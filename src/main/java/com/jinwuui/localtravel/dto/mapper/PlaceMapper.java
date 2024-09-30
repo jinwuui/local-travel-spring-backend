@@ -58,7 +58,8 @@ public class PlaceMapper {
                 .build();
     }
 
-    public static PagingResponse<BookmarkedPlaceResponse> toPagingBookmarkedPlaceResponse(List<BookmarkedPlaceDto> bookmarkedPlaceDtos) {
+    public static PagingResponse<BookmarkedPlaceResponse> toPagingBookmarkedPlaceResponse(
+            List<BookmarkedPlaceDto> bookmarkedPlaceDtos) {
         List<BookmarkedPlaceResponse> responses = bookmarkedPlaceDtos.stream()
                 .map(dto -> BookmarkedPlaceResponse.builder()
                         .placeId(dto.getPlaceId())
