@@ -60,8 +60,10 @@ class PlaceCreationServiceTest {
                 .build();
         userRepository.save(user);
 
-        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg",
+                "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg",
+                "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
                 .lat(37.5665)
                 .lng(126.978)
@@ -100,8 +102,10 @@ class PlaceCreationServiceTest {
                 .build();
         userRepository.save(user);
 
-        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg",
+                "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg",
+                "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
                 .lat(37.5665)
                 .lng(126.978)
@@ -178,8 +182,10 @@ class PlaceCreationServiceTest {
                 .build();
         userRepository.save(user);
 
-        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg", "image1 content".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("images", "image1.jpg", "image/jpeg",
+                "image1 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg",
+                "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
                 .lat(37.5665)
                 .lng(126.978)
@@ -206,8 +212,10 @@ class PlaceCreationServiceTest {
                 .build();
         userRepository.save(user);
 
-        MockMultipartFile file1 = new MockMultipartFile("notImages", "notImages.txt", "text/plain", "notImages content".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg", "image2 content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("notImages", "notImages.txt", "text/plain",
+                "notImages content".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("images", "image2.jpg", "image/jpeg",
+                "image2 content".getBytes(StandardCharsets.UTF_8));
         PlaceDto placeDto = PlaceDto.builder()
                 .lat(37.5665)
                 .lng(126.978)

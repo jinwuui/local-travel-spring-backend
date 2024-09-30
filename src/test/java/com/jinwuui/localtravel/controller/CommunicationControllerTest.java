@@ -56,9 +56,8 @@ public class CommunicationControllerTest {
     void getAnnouncements() throws Exception {
         // given
         announcementRepository.saveAll(List.of(
-            Announcement.builder().version("1.0.0").content("공지사항 1").build(),
-            Announcement.builder().version("1.0.1").content("공지사항 2").build()
-        ));
+                Announcement.builder().version("1.0.0").content("공지사항 1").build(),
+                Announcement.builder().version("1.0.1").content("공지사항 2").build()));
 
         // expected
         mockMvc.perform(get("/api/v1/communications/announcements")

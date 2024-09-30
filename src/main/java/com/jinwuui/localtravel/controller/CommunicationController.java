@@ -26,14 +26,14 @@ import static com.jinwuui.localtravel.dto.mapper.CommunicationMapper.*;
 @RequestMapping("/api/v1/communications")
 @RequiredArgsConstructor
 public class CommunicationController {
-    
+
     private final CommunicationService communicationService;
 
     @GetMapping("/announcements")
     public PagingResponse<AnnouncementResponse> getAnnouncements() {
         return toPagingAnnouncementResponse(communicationService.readAnnouncements());
     }
-    
+
     @PostMapping("/feedbacks")
     @ResponseStatus(HttpStatus.CREATED)
     public void postFeedback(@RequestBody @Valid FeedbackRequest feedbackRequest) {

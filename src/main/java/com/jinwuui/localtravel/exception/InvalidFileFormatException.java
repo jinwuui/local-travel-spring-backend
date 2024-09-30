@@ -2,7 +2,7 @@ package com.jinwuui.localtravel.exception;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
-public class InvalidFileFormatException extends LocalTravelException{
+public class InvalidFileFormatException extends LocalTravelException {
 
     private static final String MESSAGE = "잘못된 파일 형식입니다: ";
 

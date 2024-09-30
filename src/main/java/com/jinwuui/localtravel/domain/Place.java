@@ -125,16 +125,16 @@ public class Place {
     public String getEmbeddingText() {
         final String DELIMITER = " | ";
         StringBuilder embeddingText = new StringBuilder();
-        
+
         embeddingText.append("이름:").append(this.name).append(DELIMITER);
         embeddingText.append("설명:").append(this.description).append(DELIMITER);
         embeddingText.append("latitude:").append(String.format("%.6f", this.lat)).append(DELIMITER);
         embeddingText.append("longitude:").append(String.format("%.6f", this.lng)).append(DELIMITER);
-        
+
         if (this.country != null && !this.country.isEmpty()) {
             embeddingText.append("국가:").append(this.country).append(DELIMITER);
         }
-        
+
         if (this.placeCategories != null && !this.placeCategories.isEmpty()) {
             embeddingText.append("카테고리:");
             for (PlaceCategory placeCategory : this.placeCategories) {
@@ -143,11 +143,11 @@ public class Place {
             embeddingText.setLength(embeddingText.length() - 1);
             embeddingText.append(DELIMITER);
         }
-        
+
         if (this.rating != null) {
             embeddingText.append("평점:").append(this.rating);
         }
-        
+
         return embeddingText.toString().trim();
     }
 }

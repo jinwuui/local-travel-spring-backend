@@ -52,8 +52,8 @@ class AuthControllerTest {
 
         // expected
         mockMvc.perform(post("/api/v1/auth/signup")
-                        .content(objectMapper.writeValueAsString(signUpRequest))
-                        .contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(signUpRequest))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
@@ -73,8 +73,8 @@ class AuthControllerTest {
 
         // expected
         mockMvc.perform(post("/api/v1/auth/refresh")
-                        .content(objectMapper.writeValueAsString(refreshTokenRequest))
-                        .contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(refreshTokenRequest))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.refreshToken").isNotEmpty())
@@ -90,8 +90,8 @@ class AuthControllerTest {
 
         // expected
         mockMvc.perform(post("/api/v1/auth/refresh")
-                        .content(objectMapper.writeValueAsString(refreshTokenRequest))
-                        .contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(refreshTokenRequest))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
@@ -106,8 +106,8 @@ class AuthControllerTest {
 
         // expected
         mockMvc.perform(post("/api/v1/auth/refresh")
-                        .content(objectMapper.writeValueAsString(refreshTokenRequest))
-                        .contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(refreshTokenRequest))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }

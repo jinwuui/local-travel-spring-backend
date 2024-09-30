@@ -12,5 +12,5 @@ public class BookmarkStatusResponse {
     private Long placeId;
 
     private Boolean isBookmarked;
-    
+
 }

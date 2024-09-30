@@ -35,7 +35,8 @@ public class PlaceController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_USER')")
-    public Long post(@AuthenticationPrincipal UserPrincipal userPrincipal, @ModelAttribute @Valid PlaceCreateRequest placeCreateRequest) {
+    public Long post(@AuthenticationPrincipal UserPrincipal userPrincipal,
+            @ModelAttribute @Valid PlaceCreateRequest placeCreateRequest) {
         return placeCreationService.createPlaceWithImages(userPrincipal.getUserId(), toPlaceDto(placeCreateRequest));
     }
 
@@ -49,7 +50,8 @@ public class PlaceController {
     }
 
     @GetMapping(params = "category")
-    public PagingResponse<PlaceResponse> getListByCategory(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam String category) {
+    public PagingResponse<PlaceResponse> getListByCategory(@AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestParam String category) {
         if (userPrincipal != null) {
             return toPagingPlaceResponse(placeService.readForUserByCategory(userPrincipal.getUserId(), category));
         } else {
@@ -66,13 +68,15 @@ public class PlaceController {
 
     @GetMapping("/bookmarks")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public PagingResponse<BookmarkedPlaceResponse> getBookmarkList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public PagingResponse<BookmarkedPlaceResponse> getBookmarkList(
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
         return toPagingBookmarkedPlaceResponse(placeService.readBookmarks(userPrincipal.getUserId()));
     }
 
     @PostMapping("/bookmarks/{placeId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public BookmarkStatusResponse toggleBookmark(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long placeId) {
+    public BookmarkStatusResponse toggleBookmark(@AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable Long placeId) {
         boolean isBookmarked = placeService.toggleBookmark(userPrincipal.getUserId(), placeId);
         return BookmarkStatusResponse.builder()
                 .userId(userPrincipal.getUserId())

@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@Profile({"dev","prod"})
+@Profile({"dev", "prod"})
 public class GeoUtil extends ApiRequestUtil {
 
     @Value("${google.geocode.api.url}")
@@ -41,7 +41,8 @@ public class GeoUtil extends ApiRequestUtil {
     }
 
     public String getCountryName(double lat, double lng) {
-        if (isDokdo(lat, lng)) return "대한민국";
+        if (isDokdo(lat, lng))
+            return "대한민국";
 
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("latlng", lat + "," + lng);
@@ -53,8 +54,7 @@ public class GeoUtil extends ApiRequestUtil {
                 .queryParams(new LinkedMultiValueMap<>(queryParams.entrySet().stream()
                         .collect(java.util.stream.Collectors.toMap(
                                 Map.Entry::getKey,
-                                e -> java.util.Collections.singletonList(e.getValue())
-                        ))))
+                                e -> java.util.Collections.singletonList(e.getValue())))))
                 .build()
                 .toUriString();
 
@@ -90,7 +90,7 @@ public class GeoUtil extends ApiRequestUtil {
 
         static boolean isWithinBounds(double lat, double lng) {
             return lat >= LAT_MIN && lat <= LAT_MAX
-                && lng >= LNG_MIN && lng <= LNG_MAX;
+                    && lng >= LNG_MIN && lng <= LNG_MAX;
         }
     }
 }

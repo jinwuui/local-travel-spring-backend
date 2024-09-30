@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/searches")
 @RequiredArgsConstructor
 public class SearchController {
-    
+
     private final SearchService searchService;
 
     @GetMapping("/autocomplete")

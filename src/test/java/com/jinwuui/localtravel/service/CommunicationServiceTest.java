@@ -56,12 +56,9 @@ public class CommunicationServiceTest {
                 .build();
 
         announcementRepository.saveAll(List.of(announcement1, announcement2));
-        
+
         // when
         List<AnnouncementDto> result = communicationService.readAnnouncements();
-
-        log.info(">>> {}", result.get(0).getCreatedAt());
-        log.info(">>> {}", result.get(1).getCreatedAt());
 
         // expected
         assertEquals(2, result.size());

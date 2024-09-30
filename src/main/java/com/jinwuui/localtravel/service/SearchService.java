@@ -28,18 +28,18 @@ public class SearchService {
     private final PlaceRepository placeRepository;
 
     private final EmbeddingUtil embeddingUtil;
-    
+
     public List<AutocompleteDto> getAutocompleteResults(String keyword) {
         String trimmedKeyword = keyword.trim();
-        
+
         List<Double> embedding = embeddingUtil.fetchEmbedding(trimmedKeyword);
         String value = embedding.stream()
-                                .map(Object::toString)
-                                .collect(Collectors.joining(","));
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
         value = "[" + value + "]";
 
         List<Place> similarPlaces = placeRepository.findSimilarPlaces(value, similarityThreshold);
-        
+
         return similarPlaces.stream()
                 .map((Place place) -> AutocompleteDto.builder()
                         .placeId(place.getId())

@@ -44,13 +44,12 @@ public class SearchServiceTest {
                 .lng(130.71849453454735)
                 .rating(5L)
                 .build();
-        
+
         tsukemen.setEmbedding(embeddingUtil.fetchEmbedding(tsukemen.getEmbeddingText()));
 
         placeRepository.save(tsukemen);
 
         // when
-        log.info(">>> {}", tsukemen.getEmbeddingText());
         List<AutocompleteDto> results = searchService.getAutocompleteResults("tsukemen");
 
         // then
@@ -99,11 +98,11 @@ public class SearchServiceTest {
         // then
         assertNotNull(results);
         assertEquals(3, results.size());
-        
+
         assertTrue(results.stream().anyMatch(dto -> dto.getName().equals("서울특별시")));
         assertTrue(results.stream().anyMatch(dto -> dto.getName().equals("서울역")));
         assertTrue(results.stream().anyMatch(dto -> dto.getName().equals("서울타워")));
-        
+
         assertTrue(results.stream().allMatch(dto -> dto.getCountry().equals("대한민국")));
     }
 
@@ -151,13 +150,13 @@ public class SearchServiceTest {
                 .lng(136.908325)
                 .rating(4L)
                 .build();
-                        
+
         place1.setEmbedding(embeddingUtil.fetchEmbedding(place1.getEmbeddingText()));
         place2.setEmbedding(embeddingUtil.fetchEmbedding(place2.getEmbeddingText()));
         place3.setEmbedding(embeddingUtil.fetchEmbedding(place3.getEmbeddingText()));
         place4.setEmbedding(embeddingUtil.fetchEmbedding(place4.getEmbeddingText()));
         place5.setEmbedding(embeddingUtil.fetchEmbedding(place5.getEmbeddingText()));
-        
+
         placeRepository.saveAll(List.of(place1, place2, place3, place4, place5));
 
         // when
@@ -166,11 +165,11 @@ public class SearchServiceTest {
         // then
         assertNotNull(results);
         assertEquals(3, results.size());
-        
+
         assertTrue(results.stream().anyMatch(dto -> dto.getName().equals("서울특별시")));
         assertTrue(results.stream().anyMatch(dto -> dto.getName().equals("서울역")));
         assertTrue(results.stream().anyMatch(dto -> dto.getName().equals("서울타워")));
-        
+
         assertFalse(results.stream().anyMatch(dto -> dto.getName().equals("나고야")));
         assertFalse(results.stream().anyMatch(dto -> dto.getName().equals("부산광역시")));
         assertTrue(results.stream().allMatch(dto -> dto.getCountry().equals("대한민국")));

@@ -27,7 +27,8 @@ public class PlaceDto {
     private List<MultipartFile> images;
 
     @Builder
-    public PlaceDto(String name, String description, Double lat, Double lng, Long rating, List<String> categories, List<MultipartFile> images) {
+    public PlaceDto(String name, String description, Double lat, Double lng, Long rating, List<String> categories,
+            List<MultipartFile> images) {
         this.name = name;
         this.description = description;
         this.lat = lat;

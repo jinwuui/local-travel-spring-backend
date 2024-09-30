@@ -10,8 +10,9 @@ import com.jinwuui.localtravel.dto.service.FeedbackDto;
 import com.jinwuui.localtravel.dto.response.PagingResponse;
 
 public class CommunicationMapper {
-    
-    public static PagingResponse<AnnouncementResponse> toPagingAnnouncementResponse(List<AnnouncementDto> announcementDtos) {
+
+    public static PagingResponse<AnnouncementResponse> toPagingAnnouncementResponse(
+            List<AnnouncementDto> announcementDtos) {
         List<AnnouncementResponse> responses = announcementDtos.stream()
                 .map(dto -> AnnouncementResponse.builder()
                         .id(dto.getId())

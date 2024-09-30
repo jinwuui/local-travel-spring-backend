@@ -54,8 +54,8 @@ public class SecurityTest {
 
         // expected
         mockMvc.perform(post("/api/v1/auth/login")
-                        .content(objectMapper.writeValueAsString(emailPassword))
-                        .contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(emailPassword))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.refreshToken").isNotEmpty())
@@ -73,8 +73,8 @@ public class SecurityTest {
 
         // expected
         mockMvc.perform(post("/api/v1/auth/login")
-                        .content(objectMapper.writeValueAsString(emailPassword))
-                        .contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(emailPassword))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
     }
@@ -90,8 +90,8 @@ public class SecurityTest {
 
         // expected
         mockMvc.perform(post("/api/v1/auth/login")
-                        .content(objectMapper.writeValueAsString(emailPassword))
-                        .contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(emailPassword))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
     }

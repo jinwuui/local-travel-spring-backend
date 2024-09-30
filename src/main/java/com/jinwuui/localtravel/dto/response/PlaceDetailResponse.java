@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Builder
 public class PlaceDetailResponse {
-    
+
     private Long placeId;
 
     private String name;
@@ -26,5 +26,5 @@ public class PlaceDetailResponse {
     private List<String> categories;
 
     private List<String> imageUrls;
-    
+
 }

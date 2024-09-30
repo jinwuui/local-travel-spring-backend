@@ -47,20 +47,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-//                                .requestMatchers("/api/v1/auth/login").permitAll()
-//                                .requestMatchers("/api/v1/auth/signup").permitAll()
-//                                .requestMatchers("/api/v1/auth/refresh").permitAll()
-                                .anyRequest().permitAll()
-                )
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        // .requestMatchers("/api/v1/auth/login").permitAll()
+                        // .requestMatchers("/api/v1/auth/signup").permitAll()
+                        // .requestMatchers("/api/v1/auth/refresh").permitAll()
+                        .anyRequest().permitAll())
                 .addFilterBefore(emailPasswordAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .anonymous(
                         anonymous -> anonymous
                                 .principal("anonymousUser")
-                                .authorities("ROLE_ANONYMOUS")
-                )
+                                .authorities("ROLE_ANONYMOUS"))
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
                     e.authenticationEntryPoint(new Http401Handler(objectMapper));
