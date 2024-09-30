@@ -17,7 +17,7 @@ public class PlaceResponse {
 
     private Double lng;
 
-    private Boolean isFavorite;
+    private Boolean isBookmarked;
 
     private List<String> categories;
 

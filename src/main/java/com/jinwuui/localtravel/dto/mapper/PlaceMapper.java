@@ -3,9 +3,11 @@ package com.jinwuui.localtravel.dto.mapper;
 import java.util.List;
 
 import com.jinwuui.localtravel.dto.request.PlaceCreateRequest;
+import com.jinwuui.localtravel.dto.response.BookmarkedPlaceResponse;
 import com.jinwuui.localtravel.dto.response.PagingResponse;
 import com.jinwuui.localtravel.dto.response.PlaceDetailResponse;
 import com.jinwuui.localtravel.dto.response.PlaceResponse;
+import com.jinwuui.localtravel.dto.service.BookmarkedPlaceDto;
 import com.jinwuui.localtravel.dto.service.PlaceDetailDto;
 import com.jinwuui.localtravel.dto.service.PlaceDto;
 import com.jinwuui.localtravel.dto.service.PlaceSimpleDto;
@@ -25,20 +27,20 @@ public class PlaceMapper {
     }
 
     public static PagingResponse<PlaceResponse> toPagingPlaceResponse(List<PlaceSimpleDto> placeSimpleDtos) {
-        List<PlaceResponse> placeResponses = placeSimpleDtos.stream()
+        List<PlaceResponse> responses = placeSimpleDtos.stream()
                 .map((PlaceSimpleDto dto) -> PlaceResponse.builder()
                         .placeId(dto.getPlaceId())
                         .name(dto.getName())
                         .lat(dto.getLat())
                         .lng(dto.getLng())
                         .categories(dto.getCategories())
-                        .isFavorite(dto.getIsFavorite())
+                        .isBookmarked(dto.getIsBookmarked())
                         .build())
                 .collect(java.util.stream.Collectors.toList());
 
         return PagingResponse.<PlaceResponse>builder()
-                .size(placeResponses.size())
-                .items(placeResponses)
+                .size(responses.size())
+                .items(responses)
                 .build();
     }
 
@@ -50,9 +52,28 @@ public class PlaceMapper {
                 .lat(placeDetailDto.getLat())
                 .lng(placeDetailDto.getLng())
                 .rating(placeDetailDto.getRating())
-                .isFavorite(placeDetailDto.getIsFavorite())
+                .isBookmarked(placeDetailDto.getIsBookmarked())
                 .categories(placeDetailDto.getCategories())
                 .imageUrls(placeDetailDto.getImageUrls())
+                .build();
+    }
+
+    public static PagingResponse<BookmarkedPlaceResponse> toPagingBookmarkedPlaceResponse(List<BookmarkedPlaceDto> bookmarkedPlaceDtos) {
+        List<BookmarkedPlaceResponse> responses = bookmarkedPlaceDtos.stream()
+                .map(dto -> BookmarkedPlaceResponse.builder()
+                        .placeId(dto.getPlaceId())
+                        .name(dto.getName())
+                        .description(dto.getDescription())
+                        .rating(dto.getRating())
+                        .country(dto.getCountry())
+                        .isBookmarked(dto.getIsBookmarked())
+                        .imageUrls(dto.getImageUrls())
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
+
+        return PagingResponse.<BookmarkedPlaceResponse>builder()
+                .size(responses.size())
+                .items(responses)
                 .build();
     }
 }

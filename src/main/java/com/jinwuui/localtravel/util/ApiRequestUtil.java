@@ -14,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.springframework.http.HttpMethod.*;
 
@@ -27,9 +26,6 @@ public abstract class ApiRequestUtil {
     protected final RestTemplate restTemplate;
 
     protected final ObjectMapper objectMapper;
-
-    @Value("${spring.data.redis.cache.expiration}")
-    private long cacheExpiration;
 
     protected enum AuthType {
         NONE, BEARER, QUERY_PARAM, HEADER
@@ -106,7 +102,7 @@ public abstract class ApiRequestUtil {
     private void cacheResponse(String cacheKey, JsonNode response) {
         try {
             String serializedResponse = objectMapper.writeValueAsString(response);
-            redisTemplate.opsForValue().set(cacheKey, serializedResponse, cacheExpiration, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(cacheKey, serializedResponse);
         } catch (JsonProcessingException e) {
             log.error("응답 캐싱 중 오류 발생", e);
         }

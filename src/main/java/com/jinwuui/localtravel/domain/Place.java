@@ -10,6 +10,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import org.hibernate.annotations.Type;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +27,10 @@ public class Place {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String name;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String description;
 
     @Column(nullable = false)
@@ -41,7 +43,9 @@ public class Place {
 
     private String country;
 
-    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Type(JsonType.class)
+    @Column(name = "embedding", columnDefinition = "vector(3072)")
     private List<Double> embedding;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL)
@@ -49,6 +53,9 @@ public class Place {
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
+
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarks;
 
     @ManyToOne
     @JoinColumn
@@ -97,6 +104,21 @@ public class Place {
         this.images.add(image);
         if (image.getPlace() != this) {
             image.setPlace(this);
+        }
+    }
+
+    public void addBookmark(User user) {
+        if (this.bookmarks == null) {
+            this.bookmarks = new ArrayList<>();
+        }
+
+        if (this.bookmarks.stream().noneMatch(b -> b.getUser().equals(user))) {
+            Bookmark bookmark = Bookmark.builder()
+                    .user(user)
+                    .place(this)
+                    .build();
+            this.bookmarks.add(bookmark);
+            user.getBookmarks().add(bookmark);
         }
     }
 

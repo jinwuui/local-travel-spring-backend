@@ -2,6 +2,8 @@ package com.jinwuui.localtravel.controller;
 
 import com.jinwuui.localtravel.config.UserPrincipal;
 import com.jinwuui.localtravel.dto.request.PlaceCreateRequest;
+import com.jinwuui.localtravel.dto.response.BookmarkStatusResponse;
+import com.jinwuui.localtravel.dto.response.BookmarkedPlaceResponse;
 import com.jinwuui.localtravel.dto.response.PagingResponse;
 import com.jinwuui.localtravel.dto.response.PlaceDetailResponse;
 import com.jinwuui.localtravel.dto.response.PlaceResponse;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +34,7 @@ public class PlaceController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public Long post(@AuthenticationPrincipal UserPrincipal userPrincipal, @ModelAttribute @Valid PlaceCreateRequest placeCreateRequest) {
         return placeCreationService.createPlaceWithImages(userPrincipal.getUserId(), toPlaceDto(placeCreateRequest));
     }
@@ -55,7 +59,25 @@ public class PlaceController {
 
     @GetMapping("/{placeId}")
     public PlaceDetailResponse get(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String placeId) {
-        Optional<Long> optionalUserId = Optional.ofNullable(userPrincipal.getUserId());
+        Optional<Long> optionalUserId = Optional.ofNullable(userPrincipal)
+                .map(UserPrincipal::getUserId);
         return toPlaceDetailResponse(placeService.read(optionalUserId, Long.parseLong(placeId)));
+    }
+
+    @GetMapping("/bookmarks")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public PagingResponse<BookmarkedPlaceResponse> getBookmarkList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return toPagingBookmarkedPlaceResponse(placeService.readBookmarks(userPrincipal.getUserId()));
+    }
+
+    @PostMapping("/bookmarks/{placeId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public BookmarkStatusResponse toggleBookmark(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long placeId) {
+        boolean isBookmarked = placeService.toggleBookmark(userPrincipal.getUserId(), placeId);
+        return BookmarkStatusResponse.builder()
+                .userId(userPrincipal.getUserId())
+                .placeId(placeId)
+                .isBookmarked(isBookmarked)
+                .build();
     }
 }

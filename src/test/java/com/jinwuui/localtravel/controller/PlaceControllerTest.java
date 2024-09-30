@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @Slf4j
@@ -227,7 +229,7 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.items[0].name").value(savedPlace.getName()))
                     .andExpect(jsonPath("$.items[0].lat").value(savedPlace.getLat()))
                     .andExpect(jsonPath("$.items[0].lng").value(savedPlace.getLng()))
-                    .andExpect(jsonPath("$.items[0].isFavorite").value(false))
+                    .andExpect(jsonPath("$.items[0].isBookmarked").value(false))
                     .andExpect(jsonPath("$.items[0].categories").isArray())
                     .andExpect(jsonPath("$.items[0].categories", hasSize(0)));
         }
@@ -259,7 +261,7 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.items[0].name").value(savedPlace.getName()))
                     .andExpect(jsonPath("$.items[0].lat").value(savedPlace.getLat()))
                     .andExpect(jsonPath("$.items[0].lng").value(savedPlace.getLng()))
-                    .andExpect(jsonPath("$.items[0].isFavorite").value(false))
+                    .andExpect(jsonPath("$.items[0].isBookmarked").value(false))
                     .andExpect(jsonPath("$.items[0].categories").isArray())
                     .andExpect(jsonPath("$.items[0].categories", hasSize(2)))
                     .andExpect(jsonPath("$.items[0].categories[0]").value("관광"))
@@ -287,7 +289,7 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.items[0].name").value(savedPlace.getName()))
                     .andExpect(jsonPath("$.items[0].lat").value(savedPlace.getLat()))
                     .andExpect(jsonPath("$.items[0].lng").value(savedPlace.getLng()))
-                    .andExpect(jsonPath("$.items[0].isFavorite").value(false))
+                    .andExpect(jsonPath("$.items[0].isBookmarked").value(false))
                     .andExpect(jsonPath("$.items[0].categories").isArray())
                     .andExpect(jsonPath("$.items[0].categories", hasSize(0)));
         }
@@ -318,7 +320,7 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.items[0].name").value(savedPlace.getName()))
                     .andExpect(jsonPath("$.items[0].lat").value(savedPlace.getLat()))
                     .andExpect(jsonPath("$.items[0].lng").value(savedPlace.getLng()))
-                    .andExpect(jsonPath("$.items[0].isFavorite").value(false))
+                    .andExpect(jsonPath("$.items[0].isBookmarked").value(false))
                     .andExpect(jsonPath("$.items[0].categories").isArray())
                     .andExpect(jsonPath("$.items[0].categories", hasSize(2)))
                     .andExpect(jsonPath("$.items[0].categories[0]").value("관광"))
@@ -362,12 +364,12 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.items[0].name").value(place1.getName()))
                     .andExpect(jsonPath("$.items[0].lat").value(place1.getLat()))
                     .andExpect(jsonPath("$.items[0].lng").value(place1.getLng()))
-                    .andExpect(jsonPath("$.items[0].isFavorite").value(true))
+                    .andExpect(jsonPath("$.items[0].isBookmarked").value(true))
                     .andExpect(jsonPath("$.items[1].placeId").value(place2.getId()))
                     .andExpect(jsonPath("$.items[1].name").value(place2.getName()))
                     .andExpect(jsonPath("$.items[1].lat").value(place2.getLat()))
                     .andExpect(jsonPath("$.items[1].lng").value(place2.getLng()))
-                    .andExpect(jsonPath("$.items[1].isFavorite").value(false));
+                    .andExpect(jsonPath("$.items[1].isBookmarked").value(false));
         }
 
         @Test
@@ -513,7 +515,7 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.lat").value(savedPlace.getLat()))
                     .andExpect(jsonPath("$.lng").value(savedPlace.getLng()))
                     .andExpect(jsonPath("$.rating").value(savedPlace.getRating()))
-                    .andExpect(jsonPath("$.isFavorite").value(false))
+                    .andExpect(jsonPath("$.isBookmarked").value(false))
                     .andExpect(jsonPath("$.categories").isArray())
                     .andExpect(jsonPath("$.categories", hasSize(1)))
                     .andExpect(jsonPath("$.categories[0]").value("관광"))
@@ -521,52 +523,200 @@ class PlaceControllerTest {
                     .andExpect(jsonPath("$.imageUrls", hasSize(0)));
         }
 
-    @Test
-    @CustomMockUser
-    @DisplayName("카테고리와 이미지가 모두 있는 장소 상세 정보 조회")
-    void getPlaceWithCategoriesAndImages() throws Exception {
-        // given
-        Category category1 = Category.builder().name("관광").build();
-        Category category2 = Category.builder().name("맛집").build();
-        categoryRepository.saveAll(List.of(category1, category2));
+        @Test
+        @CustomMockUser
+        @DisplayName("카테고리와 이미지가 모두 있는 장소 상세 정보 조회")
+        void getPlaceWithCategoriesAndImages() throws Exception {
+            // given
+            Category category1 = Category.builder().name("관광").build();
+            Category category2 = Category.builder().name("맛집").build();
+            categoryRepository.saveAll(List.of(category1, category2));
 
-        Place place = Place.builder()
-                .name("테스트 장소")
-                .description("테스트 설명")
-                .lat(37.5665)
-                .lng(126.9780)
-                .rating(4L)
-                .build();
-        place.addCategory(category1);
-        place.addCategory(category2);
-        
-        Image image1 = Image.builder().url("http://example.com/image1.jpg").build();
-        Image image2 = Image.builder().url("http://example.com/image2.jpg").build();
-        place.addImage(image1);
-        place.addImage(image2);
-        
-        Place savedPlace = placeRepository.save(place);
+            Place place = Place.builder()
+                    .name("테스트 장소")
+                    .description("테스트 설명")
+                    .lat(37.5665)
+                    .lng(126.9780)
+                    .rating(4L)
+                    .build();
+            place.addCategory(category1);
+            place.addCategory(category2);
 
-        // expected
-        mockMvc.perform(get("/api/v1/places/{placeId}", savedPlace.getId())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.placeId").value(savedPlace.getId()))
-                .andExpect(jsonPath("$.name").value(savedPlace.getName()))
-                .andExpect(jsonPath("$.description").value(savedPlace.getDescription()))
-                .andExpect(jsonPath("$.lat").value(savedPlace.getLat()))
-                .andExpect(jsonPath("$.lng").value(savedPlace.getLng()))
-                .andExpect(jsonPath("$.rating").value(savedPlace.getRating()))
-                .andExpect(jsonPath("$.isFavorite").value(false))
-                .andExpect(jsonPath("$.categories").isArray())
-                .andExpect(jsonPath("$.categories", hasSize(2)))
-                .andExpect(jsonPath("$.categories", containsInAnyOrder("관광", "맛집")))
-                .andExpect(jsonPath("$.imageUrls").isArray())
-                .andExpect(jsonPath("$.imageUrls", hasSize(2)))
-                .andExpect(jsonPath("$.imageUrls", containsInAnyOrder(
-                        "http://example.com/image1.jpg",
-                        "http://example.com/image2.jpg"
-                )));
+            Image image1 = Image.builder().url("http://example.com/image1.jpg").build();
+            Image image2 = Image.builder().url("http://example.com/image2.jpg").build();
+            place.addImage(image1);
+            place.addImage(image2);
+
+            Place savedPlace = placeRepository.save(place);
+
+            // expected
+            mockMvc.perform(get("/api/v1/places/{placeId}", savedPlace.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.placeId").value(savedPlace.getId()))
+                    .andExpect(jsonPath("$.name").value(savedPlace.getName()))
+                    .andExpect(jsonPath("$.description").value(savedPlace.getDescription()))
+                    .andExpect(jsonPath("$.lat").value(savedPlace.getLat()))
+                    .andExpect(jsonPath("$.lng").value(savedPlace.getLng()))
+                    .andExpect(jsonPath("$.rating").value(savedPlace.getRating()))
+                    .andExpect(jsonPath("$.isBookmarked").value(false))
+                    .andExpect(jsonPath("$.categories").isArray())
+                    .andExpect(jsonPath("$.categories", hasSize(2)))
+                    .andExpect(jsonPath("$.categories", containsInAnyOrder("관광", "맛집")))
+                    .andExpect(jsonPath("$.imageUrls").isArray())
+                    .andExpect(jsonPath("$.imageUrls", hasSize(2)))
+                    .andExpect(jsonPath("$.imageUrls", containsInAnyOrder(
+                            "http://example.com/image1.jpg",
+                            "http://example.com/image2.jpg"
+                    )));
+        }
+
+        @Test
+        @CustomMockUser
+        @DisplayName("북마크된 장소 목록 조회")
+        void getBookmarkedPlaces() throws Exception {
+            // given
+            User user = userRepository.findAll().get(0);
+
+            Place place1 = Place.builder()
+                    .name("북마크된 장소1")
+                    .description("설명1")
+                    .lat(37.5665)
+                    .lng(126.9780)
+                    .rating(4L)
+                    .build();
+            Place place2 = Place.builder()
+                    .name("북마크된 장소2")
+                    .description("설명2")
+                    .lat(37.5667)
+                    .lng(126.9782)
+                    .rating(5L)
+                    .build();
+
+            Image image1 = Image.builder().url("http://example.com/image1.jpg").build();
+            Image image2 = Image.builder().url("http://example.com/image2.jpg").build();
+            place1.addImage(image1);
+            place2.addImage(image2);
+
+            placeRepository.saveAll(List.of(place1, place2));
+
+            Bookmark bookmark1 = Bookmark.builder().user(user).place(place1).build();
+            Bookmark bookmark2 = Bookmark.builder().user(user).place(place2).build();
+            bookmarkRepository.saveAll(List.of(bookmark1, bookmark2));
+
+            // expected
+            mockMvc.perform(get("/api/v1/places/bookmarks")
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.items").isArray())
+                    .andExpect(jsonPath("$.items.length()").value(2))
+                    .andExpect(jsonPath("$.items[0].imageUrls").isArray())
+                    .andExpect(jsonPath("$.items[0].imageUrls", hasSize(1)))
+                    .andExpect(jsonPath("$.items[0].imageUrls[0]").value("http://example.com/image1.jpg"))
+                    .andExpect(jsonPath("$.items[1].imageUrls").isArray())
+                    .andExpect(jsonPath("$.items[1].imageUrls", hasSize(1)))
+                    .andExpect(jsonPath("$.items[1].imageUrls[0]").value("http://example.com/image2.jpg"));
+        }
+
+        @Test
+        @CustomMockUser
+        @DisplayName("북마크가 없을 때 북마크된 장소 목록 조회")
+        void getBookmarkedPlacesWhenEmpty() throws Exception {
+            // given
+            // 북마크를 등록하지 않음
+
+            // expected
+            mockMvc.perform(get("/api/v1/places/bookmarks")
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.size").value(0))
+                    .andExpect(jsonPath("$.items").isArray())
+                    .andExpect(jsonPath("$.items").isEmpty());
+        }
+
+        @Test
+        @DisplayName("비회원이 북마크된 장소 목록 조회 시 인증 오류")
+        void getBookmarkedPlacesWhenUnauthorized() throws Exception {
+            // given
+            // 인증되지 않은 사용자
+
+            // expected
+            mockMvc.perform(get("/api/v1/places/bookmarks")
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
     }
+
+    @Nested
+    @DisplayName("북마크 토글 테스트")
+    class ToggleBookmarkTest {
+
+        @Test
+        @CustomMockUser
+        @DisplayName("북마크 토글 성공")
+        void toggleBookmarkSuccess() throws Exception {
+            // given
+            User user = userRepository.findAll().get(0);
+            Place place = Place.builder()
+                    .name("테스트 장소")
+                    .description("테스트 설명")
+                    .lat(37.5665)
+                    .lng(126.9780)
+                    .build();
+            placeRepository.save(place);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/places/bookmarks/" + place.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.userId").value(user.getId()))
+                    .andExpect(jsonPath("$.placeId").value(place.getId()))
+                    .andExpect(jsonPath("$.isBookmarked").value(true));
+
+            // 북마크가 추가되었는지 확인
+            assertTrue(bookmarkRepository.existsByUserIdAndPlaceId(user.getId(), place.getId()));
+
+            // 다시 토글하여 북마크 제거
+            mockMvc.perform(post("/api/v1/places/bookmarks/" + place.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.userId").value(user.getId()))
+                    .andExpect(jsonPath("$.placeId").value(place.getId()))
+                    .andExpect(jsonPath("$.isBookmarked").value(false));
+
+            // 북마크가 제거되었는지 확인
+            assertFalse(bookmarkRepository.existsByUserIdAndPlaceId(user.getId(), place.getId()));
+        }
+
+        @Test
+        @DisplayName("비회원이 북마크 토글 시도 시 인증 오류")
+        void toggleBookmarkUnauthorized() throws Exception {
+            // given
+            Place place = Place.builder()
+                    .name("테스트 장소")
+                    .description("테스트 설명")
+                    .lat(37.5665)
+                    .lng(126.9780)
+                    .build();
+            placeRepository.save(place);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/places/bookmarks/" + place.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @CustomMockUser
+        @DisplayName("존재하지 않는 장소 ID로 북마크 토글 시 예외 발생")
+        void toggleBookmarkNonExistentPlace() throws Exception {
+            // given
+            Long nonExistentPlaceId = 9999L;
+
+            // when & then
+            mockMvc.perform(post("/api/v1/places/bookmarks/" + nonExistentPlaceId)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest());
+        }
     }
 }

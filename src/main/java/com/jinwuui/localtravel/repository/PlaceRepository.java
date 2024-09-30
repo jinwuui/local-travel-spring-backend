@@ -2,6 +2,8 @@ package com.jinwuui.localtravel.repository;
 
 import com.jinwuui.localtravel.domain.Place;
 
+import jakarta.persistence.Tuple;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +20,14 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     @Query("SELECT DISTINCT p FROM Place p LEFT JOIN FETCH p.placeCategories pc LEFT JOIN FETCH pc.category WHERE p.id = :id")
     Optional<Place> findByIdWithCategories(Long id);
+
+    @Query("SELECT DISTINCT p FROM Place p JOIN p.bookmarks b LEFT JOIN FETCH p.images i WHERE b.user.id = :userId")
+    List<Place> findBookmarkedPlacesWithImagesByUserId(Long userId);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM place p WHERE 1 - (p.embedding <=> cast(:value as vector)) > :similarityThreshold ORDER BY 1 - (p.embedding <=> cast(:value as vector)) DESC LIMIT 7")
+    List<Place> findSimilarPlaces(String value, double similarityThreshold);
+
+    @Query(nativeQuery = true, value = "SELECT 1 - (p.embedding <=> cast(:value as vector)) as similarity FROM place p ORDER BY similarity DESC LIMIT 7")
+    List<Tuple> findSimilarities(String value);
+
 }
