@@ -7,7 +7,16 @@ spring:
   cloud:
     aws:
       region:
-        static: "ap-northeast-2"
+        static: ap-northeast-2
+      s3:
+        bucket:
+          name: local-travel-s3
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
   data:
     redis:
       host: localhost
@@ -33,6 +42,10 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 100
+
+logging:
+  level:
+    root: INFO
 
 server:
   port: 8081

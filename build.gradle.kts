@@ -31,8 +31,6 @@ dependencies {
 
     // AWS
     implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.0")
-//    implementation(platform("software.amazon.awssdk:bom:2.20.56"))
-//    implementation("software.amazon.awssdk:s3")
 
     // Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")

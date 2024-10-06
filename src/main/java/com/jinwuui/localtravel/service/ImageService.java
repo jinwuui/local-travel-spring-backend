@@ -46,12 +46,16 @@ public class ImageService {
         List<CompletableFuture<String>> futures = images.stream()
                 .map(file -> CompletableFuture.supplyAsync(() -> {
                     try {
-                        return s3Repository.save(file);
+                        String filename = s3Repository.save(file);
+                        return filename;
                     } catch (InvalidFileFormatException e) {
                         log.error("잘못된 파일 형식, 이미지 업로드 실패: {}", file.getOriginalFilename(), e);
                         return "failed: " + file.getOriginalFilename();
                     } catch (IOException e) {
                         log.error("IO 예외, 이미지 업로드 실패: {}", file.getOriginalFilename(), e);
+                        return "failed: " + file.getOriginalFilename();
+                    } catch (Exception e) {
+                        log.error("예외 발생, 이미지 업로드 실패: {}", file.getOriginalFilename(), e);
                         return "failed: " + file.getOriginalFilename();
                     }
                 }, executorService))

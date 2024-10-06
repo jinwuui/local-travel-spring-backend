@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Profile({"dev", "test"})
+@Profile("test")
 @Repository
 public class InMemoryS3Repository extends AbstractS3Repository {
 
@@ -28,10 +28,5 @@ public class InMemoryS3Repository extends AbstractS3Repository {
         files.put(key, file.getBytes());
 
         return key;
-    }
-
-    @Override
-    public long count() {
-        return files.size();
     }
 }
