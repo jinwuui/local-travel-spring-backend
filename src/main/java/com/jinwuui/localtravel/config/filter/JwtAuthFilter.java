@@ -19,25 +19,25 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+
     private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        if (isRefreshTokenRequest(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = resolveToken(request);
 
         try {
             if (token != null && jwtUtil.isTokenValid(token, jwtUtil.extractEmail(token))) {
-
                 String email = jwtUtil.extractEmail(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                UserPrincipal userPrincipal = (UserPrincipal) userDetails;
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userPrincipal,
-                        null,
-                        userPrincipal.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                
+                setAuthentication(userDetails);
             }
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
@@ -45,6 +45,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isRefreshTokenRequest(HttpServletRequest request) {
+        return request.getRequestURI().contains("/auth/refresh");
+    }
+
+    private void setAuthentication(UserDetails userDetails) {
+        UserPrincipal userPrincipal = (UserPrincipal) userDetails;
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userPrincipal,
+                null,
+                userPrincipal.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private String resolveToken(HttpServletRequest request) {

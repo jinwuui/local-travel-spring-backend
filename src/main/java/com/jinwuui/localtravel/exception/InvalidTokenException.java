@@ -10,6 +10,10 @@ public class InvalidTokenException extends LocalTravelException {
         super(MESSAGE);
     }
 
+    public InvalidTokenException(Throwable cause) {
+        super(MESSAGE, cause);
+    }
+
     @Override
     public int getStatusCode() {
         return SC_UNAUTHORIZED;

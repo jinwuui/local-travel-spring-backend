@@ -5,6 +5,7 @@ import com.jinwuui.localtravel.dto.service.SignUpDto;
 import com.jinwuui.localtravel.dto.service.TokenDto;
 import com.jinwuui.localtravel.exception.AlreadyExistsEmailException;
 import com.jinwuui.localtravel.exception.InvalidTokenException;
+import com.jinwuui.localtravel.repository.PlaceRepository;
 import com.jinwuui.localtravel.repository.UserRepository;
 import com.jinwuui.localtravel.util.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +24,9 @@ class AuthServiceTest {
     private UserRepository userRepository;
 
     @Autowired
+    private PlaceRepository placeRepository;
+
+    @Autowired
     private AuthService authService;
 
     @Autowired
@@ -33,6 +37,7 @@ class AuthServiceTest {
 
     @AfterEach
     void clean() {
+        placeRepository.deleteAll();
         userRepository.deleteAll();
     }
 

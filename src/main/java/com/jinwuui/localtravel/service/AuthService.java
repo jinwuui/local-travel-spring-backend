@@ -42,20 +42,8 @@ public class AuthService {
     }
 
     public TokenDto generateTokens(String refreshToken) {
-        if (refreshToken == null) {
-            throw new InvalidTokenException();
-        }
-
-        String email;
-        try {
-            email = jwtUtil.extractEmail(refreshToken);
-            if (jwtUtil.isTokenNotValid(refreshToken, email)) {
-                throw new InvalidTokenException();
-            }
-        } catch (Exception e) {
-            log.error("토큰 재발행 오류 {}", e.getMessage(), e);
-            throw new InvalidTokenException();
-        }
+        String email = extractEmailFromToken(refreshToken);
+        validateToken(refreshToken, email);
 
         String newAccessToken = jwtUtil.generateAccessToken(email);
         String newRefreshToken = jwtUtil.generateRefreshToken(email);
@@ -64,5 +52,19 @@ public class AuthService {
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
+    }
+
+    private String extractEmailFromToken(String refreshToken) {
+        try {
+            return jwtUtil.extractEmail(refreshToken);
+        } catch (Exception e) {
+            throw new InvalidTokenException(e);
+        }
+    }
+
+    private void validateToken(String refreshToken, String email) {
+        if (jwtUtil.isTokenNotValid(refreshToken, email)) {
+            throw new InvalidTokenException();
+        }
     }
 }

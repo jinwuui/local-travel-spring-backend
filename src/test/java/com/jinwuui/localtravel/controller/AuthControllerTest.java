@@ -1,7 +1,6 @@
 package com.jinwuui.localtravel.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jinwuui.localtravel.dto.request.RefreshTokenRequest;
 import com.jinwuui.localtravel.dto.request.SignUpRequest;
 import com.jinwuui.localtravel.repository.UserRepository;
 import com.jinwuui.localtravel.util.JwtUtil;
@@ -67,13 +66,10 @@ class AuthControllerTest {
     void refreshToken() throws Exception {
         // given
         String refreshToken = jwtUtil.generateRefreshToken("jinwuui@gmail.com");
-        RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest.builder()
-                .refreshToken(refreshToken)
-                .build();
 
         // expected
         mockMvc.perform(post("/api/v1/auth/refresh")
-                .content(objectMapper.writeValueAsString(refreshTokenRequest))
+                .header("Authorization", "Bearer " + refreshToken)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
@@ -84,13 +80,9 @@ class AuthControllerTest {
     @Test
     @DisplayName("토큰 재발행 실패 - 빈 토큰")
     void refreshTokenFailEmptyToken() throws Exception {
-        // given
-        RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest.builder()
-                .build();
-
-        // expected
+        // given & expected
         mockMvc.perform(post("/api/v1/auth/refresh")
-                .content(objectMapper.writeValueAsString(refreshTokenRequest))
+                .header("Authorization", "Bearer ")
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
@@ -99,17 +91,22 @@ class AuthControllerTest {
     @Test
     @DisplayName("토큰 재발행 실패 - 이상한 토큰")
     void refreshTokenFailInvalidToken() throws Exception {
-        // given
-        RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest.builder()
-                .refreshToken("이상한토큰")
-                .build();
-
-        // expected
+        // given & expected
         mockMvc.perform(post("/api/v1/auth/refresh")
-                .content(objectMapper.writeValueAsString(refreshTokenRequest))
+                .header("Authorization", "Bearer 123456")
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("토큰 재발행 실패 - 이상한 토큰 2")
+    void refreshTokenFailInvalidToken2() throws Exception {
+        // given & expected
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                .header("Authorization", "Hello World!")
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
 }
