@@ -4,7 +4,7 @@
 
 ## 1. 개요
 
-기간: 2024.05 ~ 2024.10 (6달)
+기간: 2024.05 ~ 2024.10 (6개월)
 
 링크: [로-컬.xyz](https://looocal.xyz)
 
@@ -24,7 +24,7 @@ DB: PostgreSQL / Redis
 
 프론트엔드: Javascript / Vue.js
 
-그 외 - NginX / Docker / Jenkins / GitHub Webhooks
+그 외: NginX / Docker / Jenkins / GitHub Webhooks
 
 <br/>
 
