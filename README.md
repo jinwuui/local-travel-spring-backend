@@ -96,7 +96,7 @@ DB: PostgreSQL / Redis
 
 ### 5.1. 서비스 구조
 
-<img alt="looocal-architecture" src="https://github.com/user-attachments/assets/f5a9f289-257c-40fe-aeae-8e6b82491d7a">
+<img alt="looocal-architecture" src="https://github.com/user-attachments/assets/7f21d432-1f1b-4ceb-8baa-bfff91b6cce3">
 
 <br/>
 
