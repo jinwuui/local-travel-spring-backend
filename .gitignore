@@ -3,6 +3,7 @@
 *.ipr
 *.iws
 *.jar
+!gradle-wrapper.jar
 *.sw?
 *~
 .#*
@@ -125,3 +126,4 @@ HELP.md
 
 # api key file
 application-secret.yml
+*.p12

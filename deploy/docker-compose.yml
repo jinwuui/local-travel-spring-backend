@@ -1,0 +1,44 @@
+version: '3.8'  # Docker Compose 파일의 버전
+services:  # 서비스 정의 시작
+  postgres:  # PostgreSQL 서비스 정의
+    image: pgvector/pgvector:pg17
+    environment:  # 환경 변수 설정
+      POSTGRES_DB: testdb  # 생성할 데이터베이스 이름
+      POSTGRES_USER: admin  # 데이터베이스 사용자 이름
+      POSTGRES_PASSWORD: admin  # 데이터베이스 사용자 비밀번호
+    ports:  # 포트 매핑
+      - "5432:5432"  # 호스트의 5432 포트를 컨테이너의 5432 포트에 매핑
+    volumes:  # 데이터 지속성을 위한 볼륨 설정
+      - postgres_data:/var/lib/postgresql/data  # PostgreSQL 데이터 저장 위치
+      - ./postgres/vector_extension.sql:/docker-entrypoint-initdb.d/vector_extension.sql
+      # - ./postgres/0-vector-extension.sh:/docker-entrypoint-initdb.d/0-vector-extension.sh
+
+  redis:  # Redis 서비스 정의
+    image: redis:latest  # 사용할 Redis 이미지
+    ports:  # 포트 매핑
+      - "6379:6379"  # 호스트의 6379 포트를 컨테이너의 6379 포트에 매핑
+
+  springboot:  # Spring Boot 애플리케이션 서비스 정의
+    build:  # Dockerfile을 사용하여 이미지 빌드
+      context: ./backend
+      dockerfile: springboot.Dockerfile  # 사용할 Spring Boot Dockerfile
+    ports:  # 포트 매핑
+      - "8443:8443"
+    environment:  # 환경 변수 설정
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/testdb  # PostgreSQL 데이터베이스 URL
+      SPRING_DATASOURCE_USERNAME: admin  # PostgreSQL 사용자 이름
+      SPRING_DATASOURCE_PASSWORD: admin  # PostgreSQL 사용자 비밀번호
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_REDIS_HOST: redis  # Redis 호스트 이름 (서비스 이름)
+      SPRING_REDIS_PORT: 6379  # Redis 포트
+      SERVER_PORT: 8443
+      SERVER_SSL_KEY-STORE: /app/keystore.p12  # SSL 키스토어 경로
+      SERVER_SSL_KEY-STORE-PASSWORD: server-ssl  # SSL 키스토어 비밀번호
+      SERVER_SSL_KEY-ALIAS: server-ssl  # SSL 키 별칭
+    depends_on:  # 의존성 설정
+      - postgres  # Spring Boot가 PostgreSQL에 의존함을 나타냄
+      - redis  # Spring Boot가 Redis에 의존함을 나타냄
+
+volumes:  # 볼륨 정의
+  postgres_data:  # PostgreSQL 데이터 저장을 위한 볼륨
