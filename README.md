@@ -80,11 +80,10 @@ DB: PostgreSQL / Redis
 - **기존 방식**: 상세 이미지와 썸네일에 2가지 종류를 사용 (원본 / 썸네일)
 - **개선 방식**: 상세 이미지와 썸네일에 4가지 종류를 사용 (small, medium, large / 썸네일)
 - **세부 설명**:
-  1. 사용자가 여행지를 등록할 때, 비동기적으로 4가지 종류의 이미지를 생성
+  1. 여행지 등록 시, 비동기적으로 4가지 종류의 이미지를 생성
   2. 이미지 생성 시, 더 효율적인 이미지 포맷인 WebP로 생성
   3. `<img>` 태그의 `srcset`과 `sizes` 속성을 사용하여 사용자의 화면 크기에 맞춰 이미지를 제공
   4. 정적 파일(이미지, 폰트)에 캐시 설정을 추가
-  5. 서브셋 폰트 적용으로 로딩 시간 단축
 
 - **전후 비교**:
   - **전**: 원본 전체 24MB, 썸네일 전체 3.3MB
@@ -97,7 +96,7 @@ DB: PostgreSQL / Redis
 
 ### 5.1. 서비스 구조
 
-<img alt="looocal-architecture" src="https://github.com/user-attachments/assets/fd0477d0-e47a-466a-a460-00626f02f3ca">
+<img alt="looocal-architecture" src="https://github.com/user-attachments/assets/7f21d432-1f1b-4ceb-8baa-bfff91b6cce3">
 
 <br/>
 
