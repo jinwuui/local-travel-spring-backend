@@ -1,0 +1,108 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 푸시할 때 트리거
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: testdb
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U admin"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Install pgvector
+        run: |
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install postgresql-17-pgvector
+
+      - name: Add pgvector to postgreSQL
+        run: psql -h localhost -U admin -d testdb -c 'CREATE EXTENSION vector'
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: "17" # 사용할 Java 버전
+          distribution: "adopt"
+
+      - name: Write Secret To application.yml in test dir
+        env:
+          PROJECT_TEST_DIR: ./local-travel/src/test/resources
+          CONFIG_TEST_FILE_NAME: application.yml
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "key:" >> $PROJECT_TEST_DIR/$CONFIG_TEST_FILE_NAME
+          echo "  api:" >> $PROJECT_TEST_DIR/$CONFIG_TEST_FILE_NAME
+          echo "    google: $GOOGLE_API_KEY" >> $PROJECT_TEST_DIR/$CONFIG_TEST_FILE_NAME
+          echo "    openai: $OPENAI_API_KEY" >> $PROJECT_TEST_DIR/$CONFIG_TEST_FILE_NAME
+
+      - name: Write Secret To application.yml in src dir
+        env:
+          PROJECT_DIR: ./local-travel/src/main/resources
+          CONFIG_ROOT_FILE_NAME: application.yml
+          CONFIG_PROD_FILE_NAME: application-prod.yml
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "spring:" >> $PROJECT_DIR/$CONFIG_ROOT_FILE_NAME
+          echo "  profiles:" >> $PROJECT_DIR/$CONFIG_ROOT_FILE_NAME
+          echo "    active: prod" >> $PROJECT_DIR/$CONFIG_ROOT_FILE_NAME
+          echo "key:" >> $PROJECT_DIR/$CONFIG_PROD_FILE_NAME
+          echo "  api:" >> $PROJECT_DIR/$CONFIG_PROD_FILE_NAME
+          echo "    google: $GOOGLE_API_KEY" >> $PROJECT_DIR/$CONFIG_PROD_FILE_NAME
+          echo "    openai: $OPENAI_API_KEY" >> $PROJECT_DIR/$CONFIG_PROD_FILE_NAME
+
+      - name: Build with Gradle
+        run: |
+          cd local-travel
+          ./gradlew clean build
+
+      - name: Copy PEM key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+
+      - name: Send JAR to EC2
+        run: |
+          scp -i ec2_key.pem -o StrictHostKeyChecking=no /home/runner/work/local-travel-spring-backend/local-travel-spring-backend/local-travel/build/libs/local-travel-0.0.1-SNAPSHOT.jar ubuntu@ec2-3-36-154-188.ap-northeast-2.compute.amazonaws.com:/home/ubuntu/server/backend
+
+      - name: SSH로 EC2에 접속하기
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            cd /home/ubuntu/server/backend # docker-compose.yml 파일이 있는 디렉토리로 이동
+            sudo docker-compose down || true # 기존 컨테이너 중지 및 제거
+            sudo docker-compose up -d # 새로운 컨테이너를 백그라운드에서 실행

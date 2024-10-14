@@ -66,6 +66,7 @@ public class PlaceServiceTest {
         bookmarkRepository.deleteAll();
         categoryRepository.deleteAll();
         placeRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
