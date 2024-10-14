@@ -28,7 +28,7 @@ DB: PostgreSQL / Redis
 
 프론트엔드: Javascript / Vue.js
 
-그 외: NginX / Docker / Jenkins / GitHub Webhooks
+그 외: NginX / Docker / GitHub Actions
 
 <br/>
 
