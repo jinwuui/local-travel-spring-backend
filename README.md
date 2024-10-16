@@ -114,7 +114,7 @@ DB: PostgreSQL / Redis
 
 ### 5.2. 인프라 구조
 
-<img alt="looocal-infra-architecture" src="https://github.com/user-attachments/assets/83fa484c-0f83-4a16-ade3-1f96c36a5b2a">
+<img alt="looocal-infra-architecture" src="https://github.com/user-attachments/assets/d1238310-8943-43c6-8642-d44962807d79">
 
 <br />
 
